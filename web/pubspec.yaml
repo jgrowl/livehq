@@ -1,0 +1,10 @@
+name: web
+version: 0.0.1
+dependencies:
+  browser: any
+  angular: 0.10.0
+  shadow_dom: any
+dev_dependencies:
+  unittest: any
+transformers:
+- angular
