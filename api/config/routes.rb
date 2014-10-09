@@ -1,56 +1,21 @@
 Rails.application.routes.draw do
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+  devise_for :users, :skip => [:omniauth_callbacks], :controllers => {registrations: 'registrations'}
 
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  devise_scope :user do
+    match "/users/auth/:provider(/:sub_provider)",
+          constraints: { provider: /oauthio/ },
+          to: "users/omniauth_callbacks#passthru",
+          as: :omniauth_authorize,
+          via: [:get, :post]
 
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
+    match "/users/auth/:action(/:sub_provider)/callback",
+          constraints: { action: /oauthio/, sub_provider: /twitter|google/ },
+          to: "users/omniauth_callbacks",
+          as: :omniauth_callback,
+          via: [:get, :post]
+  end
 
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  api_version(:module => 'Api::V1', :path => {:value => 'api/v1'}, :defaults => {:format => :json}, :default => true) do
+    get '/profile' => 'user#profile'
+  end
 end

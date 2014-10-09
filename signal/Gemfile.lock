@@ -1,0 +1,39 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
+    celluloid-io (0.16.0)
+      celluloid (>= 0.16.0)
+      nio4r (>= 1.0.0)
+    celluloid-redis (0.0.2)
+      celluloid-io (>= 0.13.0.pre)
+      redis
+    hitimes (1.2.2)
+    http (0.6.2)
+      http_parser.rb (~> 0.6.0)
+    http_parser.rb (0.6.0)
+    json (1.8.1)
+    nio4r (1.0.1)
+    rack (1.5.2)
+    redis (3.1.0)
+    reel (0.5.0)
+      celluloid (>= 0.15.1)
+      celluloid-io (>= 0.15.0)
+      http (>= 0.6.0.pre)
+      http_parser.rb (>= 0.6.0)
+      websocket_parser (>= 0.1.6)
+    reel-rack (0.2.0)
+      rack (>= 1.4.0)
+      reel (>= 0.5.0)
+    timers (4.0.1)
+      hitimes
+    websocket_parser (0.1.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  celluloid-redis
+  json
+  reel-rack

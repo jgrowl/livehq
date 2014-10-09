@@ -1,0 +1,4 @@
+name: webrtc-signal
+dependencies:
+  browser: any
+  angular: ">=0.14.0 <0.15.0"
