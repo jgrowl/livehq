@@ -1,8 +1,7 @@
 package server
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.Props
 import akka.contrib.pattern.ClusterSharding
-import com.typesafe.config.ConfigFactory
 import tv.camfire.media.config.LogicModule
 import tv.camfire.redis.SubscribeActor
 
@@ -25,7 +24,7 @@ object RedisApp {
 
       val system = modules.actorSystem
 
-      val connectionRegion = ClusterSharding(system).start(
+      val publisherRegion = ClusterSharding(system).start(
         typeName = Publisher.shardName,
         entryProps = Some(Publisher.props(modules.webRtcHelper, modules.callback)),
         idExtractor = Publisher.idExtractor,
@@ -33,8 +32,8 @@ object RedisApp {
 
       val channels = Seq()
       val patterns = Seq("media.*")
-      system.actorOf(Props(classOf[SubscribeActor], channels, patterns).withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
-
+      system.actorOf(Props(classOf[SubscribeActor], channels, patterns)
+        .withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
     }
   }
 }

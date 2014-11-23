@@ -2,11 +2,13 @@ package tv.camfire.redis
 
 import java.net.InetSocketAddress
 
+import akka.actor.ActorLogging
 import akka.contrib.pattern.ClusterSharding
+import livehq.Incoming
 import org.json4s.jackson
-import org.webrtc.SessionDescription
+import org.webrtc.{IceCandidate, SessionDescription}
 import redis.actors.RedisSubscriberActor
-import redis.api.pubsub.{PMessage, Message}
+import redis.api.pubsub.{Message, PMessage}
 import server.Publisher
 import tv.camfire.webrtc.serialization.jackson.WebrtcSerializationSupport
 
@@ -15,9 +17,9 @@ import tv.camfire.webrtc.serialization.jackson.WebrtcSerializationSupport
  */
 class SubscribeActor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
   extends RedisSubscriberActor(new InetSocketAddress("localhost", 6379), channels, patterns) with jackson.JsonMethods
-  with WebrtcSerializationSupport {
+  with WebrtcSerializationSupport with ActorLogging {
 
-  val connectionRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
+  val publisherRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
 
   def onMessage(message: Message) {
     println(s" message received: $message")
@@ -25,6 +27,7 @@ class SubscribeActor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
 
   def onPMessage(pmessage: PMessage) {
     val pchannel = pmessage.channel
+    log.info(s"pattern message received: $pmessage")
     val split = pchannel.split(":")
     val channel = split(0)
 
@@ -32,15 +35,17 @@ class SubscribeActor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
     val origin = "1"
     val data = pmessage.data
     channel match {
-      case "media.webrtc.create-peerconnection" =>
-        connectionRegion ! Publisher.Incoming.AddPeerConnection(origin)
       case "media.webrtc.offer" =>
         val s: SessionDescription = mapper.readValue(data, classOf[SessionDescription])
-        connectionRegion ! Publisher.Incoming.Offer(origin, s)
-      case _ =>
-        println("No match")
+        publisherRegion ! Incoming.Offer(origin, s)
+      case "media.webrtc.ice-candidate" =>
+        val c: IceCandidate = mapper.readValue(data, classOf[IceCandidate])
+        publisherRegion ! Incoming.Candidate(origin, c)
+      case "media.webrtc.subscribe" =>
+        // TODO: parse off target identifier
+        log.info("wat1")
+        log.info("Subscribing [{}] to identifier: [{}]", origin, 1)
+        publisherRegion ! Incoming.Subscribe(origin, "1")
     }
-
-    println(s"pattern message received: $pmessage")
   }
 }

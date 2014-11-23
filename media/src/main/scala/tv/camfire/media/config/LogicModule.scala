@@ -6,7 +6,6 @@ import com.typesafe.config.ConfigFactory
 import org.webrtc.PeerConnection
 import redis.RedisClient
 import tv.camfire.media.callback.{Callback, RedisCallback}
-import tv.camfire.media.config.factory.PeerConnectionObserverFactoryFactory
 import tv.camfire.media.factory.CamfirePeerConnectionFactory
 import tv.camfire.media.webrtc.WebRtcHelper
 
@@ -29,9 +28,7 @@ trait LogicModule extends Macwire {
   val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
     withFallback(ConfigFactory.load())
 
-//  lazy implicit val actorSystem = ActorSystem(properties.actorSystemName, config)
   lazy implicit val actorSystem = ActorSystem("ClusterSystem", config)
-  //  lazy val sessionCompanionFactoryFactory: SessionCompanionFactoryFactory = wire[SessionCompanionFactoryFactory]
 
 //  val channels = Seq("time")
 //  val patterns = Seq("pattern.*")
@@ -54,9 +51,7 @@ trait LogicModule extends Macwire {
    */
   lazy val iceServers = new java.util.ArrayList[PeerConnection.IceServer]()
   iceServers.add(new PeerConnection.IceServer(properties.iceUri, properties.iceUsername, properties.icePassword))
-  lazy val peerConnectionObserverFactoryFactory = wire[PeerConnectionObserverFactoryFactory]
 
-//  lazy val camfirePeerConnectionFactory = new PeerConnectionFactory()
   lazy val camfirePeerConnectionFactory = wire[CamfirePeerConnectionFactory]
   lazy val webRtcHelper: WebRtcHelper = wire[WebRtcHelper]
 
