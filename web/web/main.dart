@@ -1,9 +1,6 @@
 import 'package:angular/angular.dart';
 import 'package:angular/application_factory.dart';
-import 'dart:js';
-import 'dart:async';
-import 'dart:convert' show JSON;
-import 'dart:html';
+import 'package:logging/logging.dart';
 
 import 'package:angular_oauthio_wrapper/angular_oauthio_wrapper.dart';
 import 'package:satellizer/satellizer.dart';
@@ -42,8 +39,10 @@ class WebModule extends Module {
 }
 
 void main() {
-//  Logger.root.level = Level.FINEST;
-//  Logger.root.onRecord.listen((LogRecord r) { print(r.message); });
+  Logger.root.level = Level.FINEST;
+  Logger.root.onRecord.listen((LogRecord r) {
+    print(r.message);
+  });
 
   Injector injector = applicationFactory()
   .addModule(new AuthModule())
