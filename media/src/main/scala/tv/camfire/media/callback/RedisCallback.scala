@@ -23,6 +23,10 @@ with WebrtcSerializationSupport {
     redis.publish("web.webrtc.answer:%s".format(identifier), mapper.writeValueAsString(answer))
   }
 
+  override def sendOffer(identifier: String, answer: SessionDescription): Unit = {
+    redis.publish("web.webrtc.offer:%s".format(identifier), mapper.writeValueAsString(answer))
+  }
+
   override def sendIceCandidate(identifier: String, iceCandidate: IceCandidate): Unit = {
     redis.publish("web.webrtc.ice-candidate:%s".format(identifier), mapper.writeValueAsString(iceCandidate))
   }

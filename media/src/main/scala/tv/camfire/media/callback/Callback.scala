@@ -8,6 +8,9 @@ import org.webrtc.{IceCandidate, SessionDescription}
 trait Callback {
 
   def sendAnswer(identifier: String, answer: SessionDescription): Unit
+
+  def sendOffer(identifier: String, answer: SessionDescription): Unit
+
   def sendIceCandidate(identifier: String, iceCandidate: IceCandidate): Unit
 
   def onAddSession(sessionId: String): Unit

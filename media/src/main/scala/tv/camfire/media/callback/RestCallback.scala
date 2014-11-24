@@ -58,4 +58,6 @@ class RestCallback(properties: Properties)() extends Callback {
   def onUnpublish(): Unit = {}
 
   override def sendIceCandidate(identifier: String, iceCandidate: IceCandidate): Unit = ???
+
+  override def sendOffer(identifier: String, answer: SessionDescription): Unit = ???
 }

@@ -42,8 +42,12 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
 
     case Incoming.Subscribe(identifier: String, targetIdentifier: String) =>
       log.info(s"($identifier) subscribing to $targetIdentifier.")
-      // TODO: Use real stream ID!
-      _pcDetails.get(identifier).get.addStream(_pcDetails.get(targetIdentifier).get.getStreamById("1").get)
+      _pcDetails.get(identifier).get.getMediaStreams.foreach {
+        case (mediaStreamId, mediaStream) => {
+          log.info(s"Attempting to add $mediaStreamId to $identifier...")
+          sender ! Internal.AddMediaStream(identifier, mediaStreamId, mediaStream)
+        }
+      }
   }
 
   def ensurePeerConnection(identifier: String, uuid: String): Unit = {

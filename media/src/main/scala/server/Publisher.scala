@@ -29,7 +29,7 @@ object Publisher {
 class Publisher(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor
 with ActorLogging
 with PeerConnection.Observer {
-  log.info(s"Creating PeerConnection.")
+  log.info(s"Creating PeerConnection(${_identifier}.")
   private val _incomingPeerConnection = new PcDetails("", webRtcHelper.createPeerConnection(this))
 
   private val _registryPeerConnections = mutable.Map.empty[String, PcDetails]
@@ -49,6 +49,7 @@ with PeerConnection.Observer {
 
     case Incoming.Subscribe(identifier: String, targetIdentifier: String) =>
       log.info(s"Incoming.Subscribe received ($identifier -> $targetIdentifier)")
+      // This tells the registry to return the MediaStream
       context.system.actorSelection("user/registry") ! Incoming.Subscribe(identifier, targetIdentifier)
 
     // Internal
@@ -78,6 +79,22 @@ with PeerConnection.Observer {
         context.system.actorSelection(registryPcDetails.path) ! Internal.Offer(identifier, uuid, offer.get)
       } else {
         log.error(s"($uuid) Failed to create an offer! No offer will be sent!")
+      }
+
+    case Internal.AddMediaStream(identifier, mediaStreamId, mediaStream) =>
+      log.info(s"Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
+      // TODO: Figure out if we can duplicate the stream just once per publisher and registry nodes
+      // We need to duplicate the media stream again.
+      webRtcHelper.createDuplicateMediaStream(mediaStream, mediaStreamId + "-1")
+      _incomingPeerConnection.peerConnection.addStream(mediaStream, webRtcHelper.createConstraints)
+
+      // Update offer
+      val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)
+      if (offer.isDefined) {
+        log.info(s"Added MediaStream(${mediaStream.label()}). Sending updated offer.")
+        callback.sendOffer(identifier, offer.get)
+      } else {
+        log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
       }
   }
 
@@ -110,7 +127,10 @@ with PeerConnection.Observer {
       // create an offer. Not sure exactly why this is the case but might be a threading issue since we are dealing
       // with an actor.
       self ! Internal.CreateRegistryPeerConnections(_identifier)
+    } else if(iceConnectionState == IceConnectionState.DISCONNECTED) {
+      log.error("TODO: CLEAN UP REGISTRY PEERCONNECTIONS")
     }
+
     //    if (IceConnectionState.DISCONNECTED.equals(iceConnectionState)) {
     //      //      log.debug("Connection [%s] disconnected, un-registering media streams...".format(sessionId))
     //      //      callback.removeStreamsFromSession(sessionId)
@@ -119,6 +139,7 @@ with PeerConnection.Observer {
 
   override def onAddStream(mediaStream: MediaStream): Unit = {
     log.info(s"onAddStream : [${mediaStream.label()}]")
+    _incomingPeerConnection.addStream(mediaStream)
 
     val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, _identifier)
 
@@ -203,6 +224,7 @@ with PeerConnection.Observer {
 
         override def onAddStream(mediaStream: MediaStream): Unit = {
           log.info(s"RegistryPeerConnection($uuid).onAddStream : [${mediaStream.label()}]")
+          // TODO: This should actually happen!?
           log.error("onAddStream called but the registry should never do this!")
         }
 
@@ -210,6 +232,25 @@ with PeerConnection.Observer {
       }
 
       val pc = webRtcHelper.createPeerConnection(registryObserver)
+
+      // Attach all MediaStream to registry PeerConnection
+      val mediaStreams = _incomingPeerConnection.getMediaStreams
+      log.info(s"Attaching [${mediaStreams.size}] MediaStreams...")
+      mediaStreams.foreach {
+        case (mediaStreamId, mediaStream) => {
+          log.info(s"Adding MediaStream(${mediaStream.label()}) to registry PeerConnection($uuid)")
+          pc.addStream(mediaStream, webRtcHelper.createConstraints)
+          // Update offer!
+          val offer = webRtcHelper.createOffer(pc)
+          if (offer.isDefined) {
+            log.info(s"Added MediaStream(${mediaStream.label()}. Sending updated offer.")
+            callback.sendOffer(identifier, offer.get)
+          } else {
+            log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
+          }
+        }
+      }
+
       _registryPeerConnections.put(uuid, new PcDetails(path, pc))
 
       // Do the offer/answer/candidate dance with all registry members

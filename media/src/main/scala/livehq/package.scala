@@ -1,5 +1,6 @@
 import org.webrtc._
 
+import scala.collection.mutable
 
 /**
  * User: jonathan
@@ -27,7 +28,7 @@ package object livehq {
   object Internal {
     sealed trait Internal
 
-    case class AddMediaStream(identifier: String, mediaStream: MediaStream) extends Command with Internal
+    case class AddMediaStream(identifier: String, mediaStreamId: String, mediaStream: MediaStream) extends Command with Internal
 
     case class Offer(identifier: String, uuid: String, sessionDescription: SessionDescription) extends PeerConnectionCommand with Internal
     case class Answer(identifier: String, uuid: String, answer: SessionDescription) extends PeerConnectionCommand with Internal
@@ -38,9 +39,11 @@ package object livehq {
   }
 
   case class PcDetails(path: String, peerConnection: PeerConnection) {
-    val mMediaStreams = scala.collection.mutable.HashMap.empty[String, MediaStream]
+//    val mMediaStreams = scala.collection.mutable.HashMap.empty[String, MediaStream]
+    val mMediaStreams = mutable.Map.empty[String, MediaStream]
 
     def getStreamById(id: String): Option[MediaStream] = {
+      // TODO: Hard coding for testing purposes
 //      mMediaStreams.get(id)
       Some(mMediaStreams.last._2)
     }
@@ -53,6 +56,10 @@ package object livehq {
       for (mediaStream <- mMediaStreams) {
         pcDetails.peerConnection.addStream(mediaStream._2, mediaConstraints)
       }
+    }
+
+    def getMediaStreams: mutable.Map[String, MediaStream] = {
+      mMediaStreams
     }
   }
 

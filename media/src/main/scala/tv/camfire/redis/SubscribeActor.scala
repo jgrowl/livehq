@@ -31,6 +31,7 @@ class SubscribeActor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
     val split = pchannel.split(":")
     val channel = split(0)
 
+    // TODO: Change this back. Only using 1 as origin as means of testing
 //    val origin = if(split.length > 1) "" else split(1)
     val origin = "1"
     val data = pmessage.data
@@ -43,7 +44,6 @@ class SubscribeActor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
         publisherRegion ! Incoming.Candidate(origin, c)
       case "media.webrtc.subscribe" =>
         // TODO: parse off target identifier
-        log.info("wat1")
         log.info("Subscribing [{}] to identifier: [{}]", origin, 1)
         publisherRegion ! Incoming.Subscribe(origin, "1")
     }
