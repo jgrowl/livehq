@@ -39,10 +39,13 @@
     <ng-view></ng-view>
 </div>
 
-<button ng-click="ctrl.sendMedia()">SEND MEDIA</button>
+<button ng-click="ctrl.createMediaStream()">CREATE MEDIA</button>
+<button ng-click="ctrl.publishStreams()">PUBLISH STREAMS</button>
+<button ng-click="ctrl.subscribe()">SUBSCRIBE</button>
+
+<video id="pc1_video" autoplay="true" muted="true" controls></video>
 
 <script type="text/javascript" src="javascripts/oauth.min.js"></script>
-<script type="text/javascript" src="javascripts/websocket_rails.0.0.1.min.js"></script>
 <script src="packages/shadow_dom/shadow_dom.min.js"></script>
 <script type="application/dart" src="main.dart"></script>
 <script type="text/javascript" src="packages/browser/dart.js"></script>

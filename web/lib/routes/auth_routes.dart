@@ -8,6 +8,7 @@ import 'package:angular/angular.dart';
 import 'package:satellizer/satellizer.dart';
 
 
+@Injectable()
 class AuthRouteInitializer {
 
   Auth _auth;

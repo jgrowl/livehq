@@ -14,8 +14,16 @@ class AppController {
 
   AppController(this._signalService, this._peerConnectionService) {}
 
-  void sendMedia() {
-    _peerConnectionService.sendMedia();
+  void createMediaStream() {
+    _peerConnectionService.createMediaStream();
+  }
+
+  void publishStreams() {
+    _peerConnectionService.publishStreams();
+  }
+
+  void subscribe() {
+    _peerConnectionService.subscribe();
   }
 
 }
