@@ -43,15 +43,14 @@ class RedisGateway
           split = channel.split(':')
           type = split[0]
           identifier = split[1]
+          data = JSON.parse(message)
           case type
             when 'web.webrtc.answer'
-              send_if_identifier(identifier, wrap_message('answer', message))
-              # send_if_identifier(identifier, {:type => 'answer', :data => message})
+              send_if_identifier(identifier, wrap_message('answer', data))
+            when 'web.webrtc.offer'
+              send_if_identifier(identifier, wrap_message('offer', data))
             when 'web.webrtc.ice-candidate'
-              send_if_identifier(identifier, wrap_message('ice-candidate', message))
-              # if @sockets.key?(identifier)
-              #   @sockets[identifier] << JSON.generate({:type => 'ice-candidate', :data => message})
-              # end
+              send_if_identifier(identifier, wrap_message('ice-candidate', data))
             else
           end
         end

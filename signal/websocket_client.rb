@@ -35,22 +35,25 @@ class WebsocketClient
     type = json['type']
     data = JSON.generate(json['data'])
     case type
-      when 'media.webrtc.create-peerconnection'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
       when 'media.webrtc.offer'
+        publish 'publish_on_redis', "#{type}:#{@id}", data
+      when 'media.webrtc.ice-candidate'
+        publish 'publish_on_redis', "#{type}:#{@id}", data
+      when 'media.webrtc.subscribe'
         publish 'publish_on_redis', "#{type}:#{@id}", data
       else
         warn "Unknown message: [#{type}]"
     end
+
+  rescue JSON::ParserError
+    warn 'Problem parsing...'
   end
 
   def run
-    every(5) do
-      @socket.read
-    end
-  rescue Reel::SocketError, EOFError
-    info "WS client disconnected"
-    terminate
+    @socket.read_every(1)
+    rescue Reel::SocketError, EOFError
+      info "WS client disconnected"
+      terminate
   end
 end
 
