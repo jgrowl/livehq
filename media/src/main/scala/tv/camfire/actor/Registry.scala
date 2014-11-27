@@ -66,20 +66,24 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
           sender ! Internal.Candidate(identifier, uuid, candidate)
         }
 
-        override def onRemoveStream(p1: MediaStream): Unit = {
+        override def onRemoveStream(mediaStream: MediaStream): Unit = {
           log.info(s"PeerConnection($identifier)($uuid).onRemoveStream.")
+          callback.onRegistrySubRemoveStream(identifier, uuid, mediaStream)
         }
 
         override def onIceGatheringChange(gatheringState: IceGatheringState): Unit = {
           log.info(s"PeerConnection($identifier)($uuid).onIceGatheringChange : ${gatheringState.name()}")
+          callback.onRegistrySubIceGatheringChange(identifier, uuid, gatheringState)
         }
 
         override def onIceConnectionChange(connectionState: IceConnectionState): Unit = {
           log.info(s"PeerConnection($identifier)($uuid).onIceConnectionChange : ${connectionState.name()}")
+          callback.onRegistrySubIceConnectionChange(identifier, uuid, connectionState)
         }
 
         override def onAddStream(mediaStream: MediaStream): Unit = {
           log.info(s"PeerConnection($identifier)($uuid).onAddStream : ${mediaStream.label()}")
+          callback.onRegistrySubAddStream(identifier, uuid, mediaStream)
           val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, identifier)
           _pcDetails.get(identifier).get.addStream(duplicatedMediaStream)
         }
@@ -87,6 +91,8 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
         override def onDataChannel(p1: DataChannel): Unit = ???
       }
 
+      log.info(s"Creating PeerConnection($identifier)($uuid).")
+      callback.onRegistrySubInitialize(identifier, uuid, self.path.toString)
       _pcDetails.put(identifier, new PcDetails("", webRtcHelper.createPeerConnection(observer)))
     }
   }

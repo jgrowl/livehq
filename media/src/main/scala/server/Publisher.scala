@@ -113,15 +113,17 @@ with PeerConnection.Observer {
 
   override def onRemoveStream(mediaStream: MediaStream): Unit = {
     log.info(s"onRemoveStream : [${mediaStream.label()}.")
-    //    callback.onRemoveStream(sessionId, mediaStream.label())
+    callback.onRemoveStream(_identifier, mediaStream)
   }
 
   override def onIceGatheringChange(gatheringState: IceGatheringState): Unit = {
     log.info(s"onIceGatheringChange : [${gatheringState.name()}].")
+    callback.onIceGatheringChange(_identifier, gatheringState)
   }
 
   override def onIceConnectionChange(iceConnectionState: IceConnectionState): Unit = {
     log.info(s"onIceConnectionChange : [${iceConnectionState.name()}].")
+    callback.onIceConnectionChange(_identifier, iceConnectionState)
     if (iceConnectionState == IceConnectionState.CONNECTED) {
       // We have the actor send a message to itself because it will fail here if we try to have a PeerConnection
       // create an offer. Not sure exactly why this is the case but might be a threading issue since we are dealing
@@ -139,6 +141,8 @@ with PeerConnection.Observer {
 
   override def onAddStream(mediaStream: MediaStream): Unit = {
     log.info(s"onAddStream : [${mediaStream.label()}]")
+    callback.onAddStream(_identifier, mediaStream)
+
     _incomingPeerConnection.addStream(mediaStream)
 
     val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, _identifier)
@@ -160,7 +164,6 @@ with PeerConnection.Observer {
         }
       }
     }
-    //    callback.onAddStream(_identifier, mediaStream.label())
   }
 
   override def onDataChannel(p1: DataChannel): Unit = ???
@@ -188,11 +191,14 @@ with PeerConnection.Observer {
     for (path: String <- registryPaths()) {
       val uuid = newUuid
       log.info(s"Creating registry PeerConnection($uuid) for [$path]")
+      callback.onRegistryPubInitialize(identifier, uuid, path)
+
       val registry = context.system.actorSelection(path)
 
       val registryObserver = new PeerConnection.Observer() {
         override def onSignalingChange(signalState: SignalingState): Unit = {
           log.info(s"RegistryPeerConnection($uuid).onSignalingChange : [${signalState.name()}].")
+          callback.onRegistryPubSignalingChange(identifier, uuid, signalState)
         }
 
         override def onError(): Unit = {
@@ -206,14 +212,17 @@ with PeerConnection.Observer {
 
         override def onRemoveStream(mediaStream: MediaStream): Unit = {
           log.info(s"RegistryPeerConnection($uuid).onRemoveStream : [${mediaStream.label()}.")
+          callback.onRegistryPubRemoveStream(identifier, uuid, mediaStream)
         }
 
         override def onIceGatheringChange(gatheringState: IceGatheringState): Unit = {
           log.info(s"RegistryPeerConnection($uuid).onIceGatheringChange : [${gatheringState.name()}].")
+          callback.onRegistryPubIceGatheringChange(identifier, uuid, gatheringState)
         }
 
         override def onIceConnectionChange(iceConnectionState: IceConnectionState): Unit = {
           log.info(s"RegistryPeerConnection($uuid).onIceConnectionChange : [${iceConnectionState.name()}].")
+          callback.onRegistryPubIceConnectionChange(identifier, uuid, iceConnectionState)
           if (iceConnectionState == IceConnectionState.CONNECTED) {
             // Now that we're connected to the registry PeerConnection, we can add any MediaStreams
             log.info(s"RegistryPeerConnection($uuid) Attaching MediaStreams.")
@@ -226,6 +235,7 @@ with PeerConnection.Observer {
           log.info(s"RegistryPeerConnection($uuid).onAddStream : [${mediaStream.label()}]")
           // TODO: This should actually happen!?
           log.error("onAddStream called but the registry should never do this!")
+          callback.onRegistryPubAddStream(identifier, uuid, mediaStream)
         }
 
         override def onDataChannel(p1: DataChannel): Unit = ???
