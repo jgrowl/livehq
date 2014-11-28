@@ -26,6 +26,8 @@ trait Callback {
 
   def onRemoveStream(identifier: String, mediaStream: MediaStream): Unit
 
+  def onSubscribe(identifier: String, target: String, label: String): Unit
+
 
   def onRegistryPubInitialize(identifier: String, uuid: String, path: String)
 

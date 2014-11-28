@@ -45,9 +45,12 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
       _pcDetails.get(identifier).get.getMediaStreams.foreach {
         case (mediaStreamId, mediaStream) => {
           log.info(s"Attempting to add $mediaStreamId to $identifier...")
+          callback.onSubscribe(identifier, targetIdentifier, mediaStream.label())
           sender ! Internal.AddMediaStream(identifier, mediaStreamId, mediaStream)
         }
       }
+
+      // TODO: Add the ability to subscribe to a single label
   }
 
   def ensurePeerConnection(identifier: String, uuid: String): Unit = {
@@ -55,6 +58,7 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
       val observer = new PeerConnection.Observer() {
         override def onSignalingChange(signalState: SignalingState): Unit = {
           log.info(s"PeerConnection($identifier)($uuid).onSignalingChange : ${signalState.name()}")
+          callback.onRegistryPubSignalingChange(identifier, uuid, signalState)
         }
 
         override def onError(): Unit = {

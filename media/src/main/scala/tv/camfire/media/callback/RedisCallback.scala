@@ -17,11 +17,11 @@ with WebrtcSerializationSupport {
   val log = LoggerFactory.getLogger(getClass)
   val apiBase = "%s/api/v1".format(properties.restUrl)
 
-  def publisherInfoId(identifier: String): String = {
+  def publisherId(identifier: String): String = {
     s"publisher:$identifier"
   }
 
-  def publisherRegistryInfoId(identifier: String, uuid: String): String = {
+  def publisherRegistryId(identifier: String, uuid: String): String = {
     s"publisher:$identifier:registry:$uuid"
   }
 
@@ -31,6 +31,10 @@ with WebrtcSerializationSupport {
 
   def registryStreamId(identifier: String, uuid: String): String = {
     s"registry:$identifier:$uuid:streams"
+  }
+
+  def streamSubscriptionId(identifier: String, label: String): String = {
+    s"publisher:$identifier:stream:$label"
   }
 
   override def sendAnswer(identifier: String, answer: SessionDescription): Unit = {
@@ -54,64 +58,68 @@ with WebrtcSerializationSupport {
   }
 
   override def onIceConnectionChange(identifier: String, iceConnectionState: IceConnectionState): Unit = {
-    redis.hset(s"${publisherInfoId(identifier)}", "ice-connection-state", iceConnectionState.name())
+    redis.hset(publisherId(identifier), "ice-connection-state", iceConnectionState.name())
   }
 
   override def onIceGatheringChange(identifier: String, iceGatheringState: IceGatheringState): Unit = {
-    redis.hset(s"${publisherInfoId(identifier)}", "ice-connection-state", iceGatheringState.name())
+    redis.hset(publisherId(identifier), "ice-connection-state", iceGatheringState.name())
   }
 
   override def onSignalingChange(identifier: String, signalState: SignalingState): Unit = {
-    redis.hset(s"${publisherInfoId(identifier)}", "signal-state", signalState.name())
+    redis.hset(publisherId(identifier), "signal-state", signalState.name())
   }
 
   ////////////////
 
   override def onRegistryPubInitialize(identifier: String, uuid: String, path: String): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "path", path)
+    redis.hset(publisherRegistryId(identifier, uuid), "path", path)
   }
 
   override def onRegistryPubIceConnectionChange(identifier: String, uuid: String, iceConnectionState: IceConnectionState): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "pub-ice-connection-state", iceConnectionState.name())
+    redis.hset(publisherRegistryId(identifier, uuid), "pub-ice-connection-state", iceConnectionState.name())
   }
 
   override def onRegistryPubIceGatheringChange(identifier: String, uuid: String, iceGatheringState: IceGatheringState): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "pub-ice-connection-state", iceGatheringState.name())
+    redis.hset(publisherRegistryId(identifier, uuid), "pub-ice-connection-state", iceGatheringState.name())
   }
 
   override def onRegistryPubSignalingChange(identifier: String, uuid: String, signalState: SignalingState): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "pub-signal-state", signalState.name())
+    redis.hset(publisherRegistryId(identifier, uuid), "pub-signal-state", signalState.name())
   }
 
   override def onRegistryPubAddStream(identifier: String, uuid: String, mediaStream: MediaStream): Unit = {
-    redis.sadd(s"${registryStreamId(identifier, uuid)}", mediaStream.label())
+    redis.sadd(registryStreamId(identifier, uuid), mediaStream.label())
   }
 
   override def onRegistryPubRemoveStream(identifier: String, uuid: String, mediaStream: MediaStream): Unit = {
-    redis.srem(s"${registryStreamId(identifier, uuid)}", mediaStream.label())
+    redis.srem(registryStreamId(identifier, uuid), mediaStream.label())
   }
 
   override def onRegistrySubInitialize(identifier: String, uuid: String, path: String): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "sub-path", path)
+    redis.hset(publisherRegistryId(identifier, uuid), "sub-path", path)
   }
 
   override def onRegistrySubIceConnectionChange(identifier: String, uuid: String, iceConnectionState: IceConnectionState): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "sub-ice-connection-state", iceConnectionState.name())
+    redis.hset(publisherRegistryId(identifier, uuid), "sub-ice-connection-state", iceConnectionState.name())
   }
 
   override def onRegistrySubIceGatheringChange(identifier: String, uuid: String, iceGatheringState: IceGatheringState): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "sub-ice-connection-state", iceGatheringState.name())
+    redis.hset(publisherRegistryId(identifier, uuid), "sub-ice-connection-state", iceGatheringState.name())
   }
 
   override def onRegistrySubAddStream(identifier: String, uuid: String, mediaStream: MediaStream): Unit = {
-    redis.sadd(s"${registryStreamId(identifier, uuid)}", mediaStream.label())
+    redis.sadd(registryStreamId(identifier, uuid), mediaStream.label())
   }
 
   override def onRegistrySubRemoveStream(identifier: String, uuid: String, mediaStream: MediaStream): Unit = {
-    redis.srem(s"${registryStreamId(identifier, uuid)}", mediaStream.label())
+    redis.srem(registryStreamId(identifier, uuid), mediaStream.label())
   }
 
   override def onRegistrySubSignalingChange(identifier: String, uuid: String, signalState: SignalingState): Unit = {
-    redis.hset(s"${publisherRegistryInfoId(identifier, uuid)}", "sub-ice-signal-state", signalState.name())
+    redis.hset(publisherRegistryId(identifier, uuid), "sub-ice-signal-state", signalState.name())
+  }
+
+  override def onSubscribe(identifier: String, target: String, label: String): Unit = {
+    redis.sadd(streamSubscriptionId(identifier, label), target)
   }
 }
