@@ -1,7 +1,7 @@
 package tv.camfire.actor
 
 import akka.actor.{Actor, ActorLogging}
-import livehq.{Incoming, Internal, PcDetails}
+import livehq.{StandardPcDetails, Incoming, Internal, PcDetails}
 import org.webrtc.PeerConnection.{IceConnectionState, IceGatheringState, SignalingState}
 import org.webrtc.{DataChannel, IceCandidate, MediaStream, PeerConnection}
 import tv.camfire.media.callback.Callback
@@ -97,7 +97,7 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
 
       log.info(s"Creating PeerConnection($identifier)($uuid).")
       callback.onRegistrySubInitialize(identifier, uuid, self.path.toString)
-      _pcDetails.put(identifier, new PcDetails("", webRtcHelper.createPeerConnection(observer)))
+      _pcDetails.put(identifier, new StandardPcDetails(webRtcHelper.createPeerConnection(observer)))
     }
   }
 }

@@ -38,8 +38,8 @@ package object livehq {
     case class AttachMediaStreams(identifier: String, uuid: String) extends PeerConnectionCommand with Internal
   }
 
-  case class PcDetails(path: String, peerConnection: PeerConnection) {
-//    val mMediaStreams = scala.collection.mutable.HashMap.empty[String, MediaStream]
+  class PcDetails(val peerConnection: PeerConnection) {
+//    case class PcDetails(path: String, peerConnection: PeerConnection) {
     val mMediaStreams = mutable.Map.empty[String, MediaStream]
 
     def getStreamById(id: String): Option[MediaStream] = {
@@ -52,16 +52,14 @@ package object livehq {
       mMediaStreams.put(mediaStream.label(), mediaStream)
     }
 
-    def attachStreams(pcDetails: PcDetails, mediaConstraints: MediaConstraints): Unit = {
-      for (mediaStream <- mMediaStreams) {
-        pcDetails.peerConnection.addStream(mediaStream._2, mediaConstraints)
-      }
-    }
-
     def getMediaStreams: mutable.Map[String, MediaStream] = {
       mMediaStreams
     }
   }
+
+  case class StandardPcDetails(override val peerConnection: PeerConnection) extends PcDetails(peerConnection) {}
+
+  case class PathedPcDetails(path: String, override val peerConnection: PeerConnection) extends PcDetails(peerConnection) {}
 
 //  type PcLookup = scala.collection.mutable.HashMap[String, PcDetails]
 
@@ -79,68 +77,6 @@ package object livehq {
 //      _NO_SESSION_COMPANION.format(sessionId, msg)
 //    }
 //  }
-//
-//  sealed trait SessionCompanionEvent
-//
-//  sealed trait SessionManagerEvent
-//
-//  object Incoming {
-//
-//    sealed trait Incoming
-//
-//    case class RemoveSession(sessionId: String) extends SessionManagerEvent with Incoming
-//
-//    case class Offer(sessionId: String, remoteDescription: SessionDescription) extends SessionCompanionEvent with Incoming
-//
-//    case class Answer(sessionId: String, remoteDescription: SessionDescription) extends SessionCompanionEvent with Incoming
-//
-//    case class IceCandidate(sessionId: String, iceCandidate: org.webrtc.IceCandidate) extends SessionCompanionEvent with Incoming
-//
-//    case class Publish() extends SessionCompanionEvent with Incoming
-//
-//    case class Unpublish() extends SessionCompanionEvent with Incoming
-//
-//    case class Subscribe(sessionId: String, label: String) extends SessionCompanionEvent with Incoming
-//
-//    case class Unsubscribe(sessionId: String, resourceId: String) extends SessionCompanionEvent with Incoming
-//
-//  }
-//
-//  object Outgoing {
-//
-//    sealed trait Outgoing
-//
-//    case class Answer(description: SessionDescription) extends SessionCompanionEvent with Outgoing
-//
-//    case class Offer(description: SessionDescription) extends SessionCompanionEvent with Outgoing
-//
-//    case class IceCandidate(iceCandidate: org.webrtc.IceCandidate) extends SessionCompanionEvent with Outgoing
-//
-//  }
 
-//  object Internal {
-//
-//    sealed trait Internal
-//
-//    case class AddSession(sessionId: String) extends SessionManagerEvent with Internal
-//
-//    case class AddStream(sessionId: String, mediaStream: MediaStream) extends SessionCompanionEvent with Internal
-//
-//    case class SubscribeNotification(requester: ActorRef, label: String) extends SessionCompanionEvent with Internal
-//
-//    case class Subscribe(mediaStream: MediaStream) extends SessionCompanionEvent with Internal
-//
-//  }
-
-
-  //  case class GetAvailableStreams() extends SessionCompanionEvent
-  //
-  //  case class RegisterMediaStream(sessionId: String, mediaStream: MediaStream) extends SessionCompanionEvent
-  //
-  //  case class UnRegisterAllMediaStreams(sessionId: String) extends SessionCompanionEvent
-  //
-  //  case class TellActorMediaStream(actorRef: ActorRef) extends SessionCompanionEvent
-  //
-  //  case class ReceiveActorMediaStream(mediaStream: MediaStream) extends SessionCompanionEvent
 
 }

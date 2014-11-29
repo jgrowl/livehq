@@ -30,9 +30,9 @@ class Publisher(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor
 with ActorLogging
 with PeerConnection.Observer {
   log.info(s"Creating PeerConnection(${_identifier}.")
-  private val _incomingPeerConnection = new PcDetails("", webRtcHelper.createPeerConnection(this))
+  private val _incomingPeerConnection = new StandardPcDetails(webRtcHelper.createPeerConnection(this))
 
-  private val _registryPeerConnections = mutable.Map.empty[String, PcDetails]
+  private val _registryPeerConnections = mutable.Map.empty[String, PathedPcDetails]
 
   override def receive: Actor.Receive = {
     case Incoming.Offer(identifier, sessionDescription) =>
@@ -72,7 +72,11 @@ with PeerConnection.Observer {
     case Internal.AttachMediaStreams(identifier, uuid) =>
       log.info(s"Internal.AttachMediaStreams received.")
       val registryPcDetails = _registryPeerConnections.get(uuid).get
-      _incomingPeerConnection.attachStreams(registryPcDetails, webRtcHelper.createConstraints)
+
+      for (mediaStream <- _incomingPeerConnection.getMediaStreams) {
+        registryPcDetails.peerConnection.addStream(mediaStream._2, webRtcHelper.createConstraints)
+      }
+
       // Send out an updated offer after MediaStream(s) have been added.
       val offer = webRtcHelper.createOffer(registryPcDetails.peerConnection)
       if (offer.isDefined) {
@@ -100,6 +104,7 @@ with PeerConnection.Observer {
 
   override def onSignalingChange(signalState: SignalingState): Unit = {
     log.info(s"onSignalingChange : [${signalState.name()}].")
+    callback.onSignalingChange(_identifier, signalState)
   }
 
   override def onError(): Unit = {
@@ -130,13 +135,24 @@ with PeerConnection.Observer {
       // with an actor.
       self ! Internal.CreateRegistryPeerConnections(_identifier)
     } else if(iceConnectionState == IceConnectionState.DISCONNECTED) {
-      log.error("TODO: CLEAN UP REGISTRY PEERCONNECTIONS")
+      log.info(s"Disconnected, closing [${_registryPeerConnections.size}] registry PeerConnection(s)...")
+      _registryPeerConnections.foreach {
+        case (uuid, pcDetail) => {
+          log.info(s"Closing $uuid...")
+          log.info(s"(${uuid}) Closing ${pcDetail.getMediaStreams.size} MediaStreams")
+          pcDetail.getMediaStreams.foreach {
+            case (label, mediaStream) => {
+              pcDetail.peerConnection.removeStream(mediaStream)
+              // Even though we remove the stream, the onRemoveStream callback does not seem to automatically get called
+              callback.onRemoveStream(_identifier, mediaStream)
+            }
+          }
+          pcDetail.mMediaStreams.clear()
+          pcDetail.peerConnection.close()
+        }
+      }
+      _registryPeerConnections.clear()
     }
-
-    //    if (IceConnectionState.DISCONNECTED.equals(iceConnectionState)) {
-    //      //      log.debug("Connection [%s] disconnected, un-registering media streams...".format(sessionId))
-    //      //      callback.removeStreamsFromSession(sessionId)
-    //    }
   }
 
   override def onAddStream(mediaStream: MediaStream): Unit = {
@@ -250,7 +266,6 @@ with PeerConnection.Observer {
         case (mediaStreamId, mediaStream) => {
           log.info(s"Adding MediaStream(${mediaStream.label()}) to registry PeerConnection($uuid)")
           pc.addStream(mediaStream, webRtcHelper.createConstraints)
-          // Update offer!
           val offer = webRtcHelper.createOffer(pc)
           if (offer.isDefined) {
             log.info(s"Added MediaStream(${mediaStream.label()}. Sending updated offer.")
@@ -261,7 +276,7 @@ with PeerConnection.Observer {
         }
       }
 
-      _registryPeerConnections.put(uuid, new PcDetails(path, pc))
+      _registryPeerConnections.put(uuid, new PathedPcDetails(path, pc))
 
       // Do the offer/answer/candidate dance with all registry members
       val offer = webRtcHelper.createOffer(pc)
