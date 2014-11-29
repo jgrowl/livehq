@@ -29,8 +29,12 @@ with WebrtcSerializationSupport {
     s"publisher:$identifier:streams"
   }
 
+  def registryId(identifier: String): String = {
+    s"registry:$identifier"
+  }
+
   def registryStreamId(identifier: String, uuid: String): String = {
-    s"registry:$identifier:$uuid:streams"
+    s"${registryId(identifier)}:$uuid:streams"
   }
 
   def streamSubscriptionId(identifier: String, label: String): String = {
@@ -58,7 +62,13 @@ with WebrtcSerializationSupport {
   }
 
   override def onIceConnectionChange(identifier: String, iceConnectionState: IceConnectionState): Unit = {
-    redis.hset(publisherId(identifier), "ice-connection-state", iceConnectionState.name())
+    if (iceConnectionState == IceConnectionState.DISCONNECTED) {
+      redis.del(publisherId(identifier))
+//      redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))",  Seq("0"), Seq(s"${publisherId(identifier)}:*"))
+//      redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))",  Seq("0"), Seq(s"${registryId(identifier)}:*"))
+    } else {
+      redis.hset(publisherId(identifier), "ice-connection-state", iceConnectionState.name())
+    }
   }
 
   override def onIceGatheringChange(identifier: String, iceGatheringState: IceGatheringState): Unit = {
@@ -101,6 +111,9 @@ with WebrtcSerializationSupport {
 
   override def onRegistrySubIceConnectionChange(identifier: String, uuid: String, iceConnectionState: IceConnectionState): Unit = {
     redis.hset(publisherRegistryId(identifier, uuid), "sub-ice-connection-state", iceConnectionState.name())
+    if (iceConnectionState == IceConnectionState.DISCONNECTED) {
+      redis.del(publisherRegistryId(identifier, uuid))
+    }
   }
 
   override def onRegistrySubIceGatheringChange(identifier: String, uuid: String, iceGatheringState: IceGatheringState): Unit = {
