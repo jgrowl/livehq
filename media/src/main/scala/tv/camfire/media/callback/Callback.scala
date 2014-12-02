@@ -37,11 +37,6 @@ trait Callback {
 
   def onRegistryPubSignalingChange(identifier: String, uuid: String, signalState: SignalingState): Unit
 
-  def onRegistryPubAddStream(identifier: String, uuid: String, mediaStream: MediaStream): Unit
-
-  def onRegistryPubRemoveStream(identifier: String, uuid: String, mediaStream: MediaStream): Unit
-
-
   def onRegistrySubInitialize(identifier: String, uuid: String, path: String)
 
   def onRegistrySubIceConnectionChange(identifier: String, uuid: String, iceConnectionState: IceConnectionState): Unit

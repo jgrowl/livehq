@@ -61,6 +61,26 @@ package object livehq {
 
   case class PathedPcDetails(path: String, override val peerConnection: PeerConnection) extends PcDetails(peerConnection) {}
 
+
+  object Log {
+    def pcId(identifier: String): String = {
+      s"PeerConnection($identifier)"
+    }
+
+    private def _registryPcId(identifier: String, uuid: String): String = {
+      s"${pcId(identifier)}($uuid)"
+    }
+
+    def registryPubPcId(identifier: String, uuid: String): String = {
+      s"${_registryPcId(identifier, uuid)}(pub)"
+    }
+
+    def registrySubPcId(identifier: String, uuid: String): String = {
+      s"${_registryPcId(identifier, uuid)}(sub)"
+    }
+  }
+
+
 //  type PcLookup = scala.collection.mutable.HashMap[String, PcDetails]
 
 //  object ErrorMessages {
