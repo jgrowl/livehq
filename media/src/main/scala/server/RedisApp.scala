@@ -24,9 +24,9 @@ object RedisApp {
 
       val system = modules.actorSystem
 
-      val publisherRegion = ClusterSharding(system).start(
+      ClusterSharding(system).start(
         typeName = Publisher.shardName,
-        entryProps = Some(Publisher.props(modules.webRtcHelper, modules.callback)),
+        entryProps = None, // Starting in Proxy mode
         idExtractor = Publisher.idExtractor,
         shardResolver = Publisher.shardResolver)
 

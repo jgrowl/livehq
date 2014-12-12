@@ -9,7 +9,7 @@ object WebRtcApp {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty)
       startup(Seq("2551", "0"))
-//    startup(Seq("2551", "2552", "0"))
+//      startup(Seq("2551", "2552", "0"))
     else
       startup(args)
   }
@@ -25,13 +25,13 @@ object WebRtcApp {
 
       val system = modules.actorSystem
 
-      val registry = system.actorOf(Props(new Registry(modules.webRtcHelper, modules.callback)), "registry")
-
-      val connectionRegion = ClusterSharding(system).start(
+      ClusterSharding(system).start(
         typeName = Publisher.shardName,
         entryProps = Some(Publisher.props(modules.webRtcHelper, modules.callback)),
         idExtractor = Publisher.idExtractor,
         shardResolver = Publisher.shardResolver)
+
+      system.actorOf(Props(new Registry(modules.webRtcHelper, modules.callback)), "registry")
     }
   }
 }

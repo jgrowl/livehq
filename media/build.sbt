@@ -1,17 +1,17 @@
 import com.typesafe.sbt.SbtMultiJvm
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 
-val akkaVersion = "2.3.4"
+val akkaVersion = "2.3.7"
 
 //lazy val depProject = RootProject(uri("git://github.com/camfire/webrtc-jackson-serialization#master"))
 
 val project = Project(
-  id = "akka-cluster-sharding-scala",
+  id = "media",
   base = file("."),
   settings = Project.defaultSettings ++ SbtMultiJvm.multiJvmSettings ++ Seq(
     name := "akka-cluster-sharding-scala",
     version := "1.0",
-    scalaVersion := "2.11.2",
+    scalaVersion := "2.11.4",
     resolvers += "rediscala" at "http://dl.bintray.com/etaty/maven",
     libraryDependencies ++= Seq(
       "org.json4s" %% "json4s-jackson" % "3.2.10",
