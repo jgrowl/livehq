@@ -2,14 +2,13 @@ package server
 
 import akka.actor.Props
 import akka.contrib.pattern.ClusterSharding
-import tv.camfire.actor.Registry
+import server.registry.Registry
 import tv.camfire.media.config.LogicModule
 
 object WebRtcApp {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty)
       startup(Seq("2551", "0"))
-//      startup(Seq("2551", "2552", "0"))
     else
       startup(args)
   }

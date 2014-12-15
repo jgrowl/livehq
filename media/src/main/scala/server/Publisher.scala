@@ -35,7 +35,7 @@ with ActorLogging {
 
   _init()
 
-  def _init(): Unit = {
+  private def _init(): Unit = {
     log.info(s"$pcId Initialized.")
     _incomingPeerConnection = new StandardPcDetails(webRtcHelper.createPeerConnection(
       new PublisherPcObs(
@@ -71,8 +71,8 @@ with ActorLogging {
       // This tells the registry to return the MediaStream
       context.system.actorSelection("user/registry") ! Incoming.Subscribe(identifier, publisherIdentifier)
 
-    case Internal.RequestPeerConnection(identifier: String) =>
-      _initRegistryPc(identifier, sender())
+    case Internal.RequestPeerConnection(identifier: String, uuid: String) =>
+      _initRegistryPc(identifier, uuid)
 
     // Internal
     case Internal.Candidate(identifier, uuid, candidate) =>
@@ -101,7 +101,8 @@ with ActorLogging {
       }
       _init()
 
-    case Internal.AddRegistryMediaStream(identifier, mediaStreamId, mediaStream) =>
+//    case Internal.AddRegistryMediaStream(identifier, mediaStreamId, mediaStream) =>
+    case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
       log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
       _incomingPeerConnection.peerConnection.addStream(mediaStream, webRtcHelper.createConstraints)
 
@@ -109,7 +110,7 @@ with ActorLogging {
       val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)
       if (offer.isDefined) {
         log.info(s"Added MediaStream(${mediaStream.label()}). Sending updated offer.")
-        callback.sendOffer(identifier, offer.get)
+        callback.sendOffer(_identifier, offer.get)
       } else {
         log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
       }
@@ -117,11 +118,9 @@ with ActorLogging {
 
   def _identifier = self.path.name
 
-  def newUuid = java.util.UUID.randomUUID.toString
-
-  def _initRegistryPc(identifier: String, actorRef: ActorRef): Unit = {
+  def _initRegistryPc(identifier: String, uuid: String): Unit = {
+    val actorRef = sender()
     val path = actorRef.path.toString
-    val uuid = newUuid
     val logId = Log.registryPubPcId(_identifier, uuid)
     log.info(s"$logId Creating registry PeerConnection at [$path]")
     callback.onRegistryPubInitialize(identifier, uuid, path)

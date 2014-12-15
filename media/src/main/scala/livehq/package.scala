@@ -37,12 +37,13 @@ package object livehq {
 
     object Registry {
       sealed trait Registry
-      case class ProcessPendingSubscriptions(identifier: String) extends Command with Internal
+      case class Connected(identifier: String) extends Command with Internal
       case class Initialize(identifier: String) extends Command with Internal
       case class AddStream(identifier: String, mediaStream: MediaStream) extends Command with Internal
     }
 
-    case class AddRegistryMediaStream(identifier: String, mediaStreamId: String, mediaStream: MediaStream) extends Command with Internal
+//    case class AddRegistryMediaStream(identifier: String, mediaStreamId: String, mediaStream: MediaStream) extends Command with Internal
+    case class AddRegistryMediaStream(mediaStreamId: String, mediaStream: MediaStream) extends Internal
 
     case class Offer(identifier: String, uuid: String, sessionDescription: SessionDescription) extends PeerConnectionCommand with Internal
     case class Answer(identifier: String, uuid: String, answer: SessionDescription) extends PeerConnectionCommand with Internal
@@ -54,7 +55,7 @@ package object livehq {
 
     case class AttachMediaStreams(identifier: String, uuid: String) extends PeerConnectionCommand with Internal
 
-    case class RequestPeerConnection(identifier: String) extends Command with Internal
+    case class RequestPeerConnection(identifier: String, uuid: String) extends Command with Internal
   }
 
   class PcDetails(val peerConnection: PeerConnection, val webRtcHelper: WebRtcHelper) {

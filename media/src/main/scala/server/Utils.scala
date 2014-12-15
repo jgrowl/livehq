@@ -7,4 +7,6 @@ object Utils {
   def stripNewline(string: String): String = {
     string.replaceAll("\\r\\n", "")
   }
+
+  def uuid = java.util.UUID.randomUUID.toString
 }

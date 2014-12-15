@@ -1,6 +1,6 @@
 package server.pc.obs
 
-import akka.actor.ActorRef
+import akka.actor.{PoisonPill, ActorRef}
 import akka.event.LoggingAdapter
 import livehq.Internal
 import org.webrtc.PeerConnection.{IceConnectionState, IceGatheringState, SignalingState}
@@ -50,9 +50,10 @@ class RegistryToPublisherPcObs(
     callback.onRegistrySubIceConnectionChange(identifier, uuid, iceConnectionState)
 
     if (iceConnectionState == IceConnectionState.CONNECTED) {
-      self.tell(Internal.Registry.ProcessPendingSubscriptions(identifier), self)
+      self.tell(Internal.Registry.Connected(identifier), self)
     } else if(iceConnectionState == IceConnectionState.DISCONNECTED) {
-      self.tell(Internal.Registry.Initialize(identifier), self)
+//      self.tell(Internal.Registry.Initialize(identifier), self)
+      self.tell(PoisonPill.getInstance, self)
     }
   }
 
