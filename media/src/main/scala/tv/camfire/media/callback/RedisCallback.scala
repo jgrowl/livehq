@@ -15,7 +15,6 @@ import tv.camfire.webrtc.serialization.jackson.WebrtcSerializationSupport
 class RedisCallback(properties: Properties, redis: RedisClient)() extends Callback with jackson.JsonMethods
 with WebrtcSerializationSupport {
   val log = LoggerFactory.getLogger(getClass)
-  val apiBase = "%s/api/v1".format(properties.restUrl)
 
   def pcId(identifier: String): String = {
     s"pc:$identifier"
@@ -64,7 +63,7 @@ with WebrtcSerializationSupport {
   override def onIceConnectionChange(identifier: String, iceConnectionState: IceConnectionState): Unit = {
     if (iceConnectionState == IceConnectionState.DISCONNECTED) {
       // Ripley: I say we take off and nuke the entire site from orbit. It's the only way to be sure.
-      redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))",  Seq("0"), Seq(s"${pcId(identifier)}:*"))
+      redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))",  Seq("0"), Seq(s"${pcId(identifier)}*"))
     } else {
       redis.hset(pcId(identifier), "ice-connection-state", iceConnectionState.name())
     }
