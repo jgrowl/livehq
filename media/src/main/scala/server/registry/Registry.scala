@@ -1,7 +1,7 @@
 package server.registry
 
 import akka.actor._
-import livehq.{Incoming, Command}
+import livehq.Incoming
 import tv.camfire.media.callback.Callback
 import tv.camfire.media.webrtc.WebRtcHelper
 

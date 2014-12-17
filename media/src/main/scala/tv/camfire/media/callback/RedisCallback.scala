@@ -16,8 +16,16 @@ class RedisCallback(properties: Properties, redis: RedisClient)() extends Callba
 with WebrtcSerializationSupport {
   val log = LoggerFactory.getLogger(getClass)
 
+  def pcsId: String= {
+    "pcs"
+  }
+
   def pcId(identifier: String): String = {
     s"pc:$identifier"
+  }
+
+  def registryPcsId(identifier: String): String = {
+    s"${pcId(identifier)}:rs"
   }
 
   def registryPcId(identifier: String, uuid: String): String = {
@@ -36,8 +44,8 @@ with WebrtcSerializationSupport {
     s"${registrySubPcId(identifier, uuid)}:streams"
   }
 
-  def pcStreamSubscribersId(identifier: String, label: String): String = {
-    s"${pcId(identifier)}:stream:$label:subscribers"
+  def pcStreamSubscribersId(identifier: String): String = {
+    s"${pcId(identifier)}:subscribers"
   }
 
   override def sendAnswer(identifier: String, answer: SessionDescription): Unit = {
@@ -61,12 +69,16 @@ with WebrtcSerializationSupport {
   }
 
   override def onIceConnectionChange(identifier: String, iceConnectionState: IceConnectionState): Unit = {
-    if (iceConnectionState == IceConnectionState.DISCONNECTED) {
+    if (iceConnectionState == IceConnectionState.DISCONNECTED || iceConnectionState == IceConnectionState.CLOSED) {
+      redis.srem(pcsId, identifier)
       // Ripley: I say we take off and nuke the entire site from orbit. It's the only way to be sure.
       redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))",  Seq("0"), Seq(s"${pcId(identifier)}*"))
-    } else {
-      redis.hset(pcId(identifier), "ice-connection-state", iceConnectionState.name())
+      return
+    } else if (iceConnectionState == IceConnectionState.CONNECTED) {
+      redis.sadd(pcsId, identifier)
     }
+
+    redis.hset(pcId(identifier), "ice-connection-state", iceConnectionState.name())
   }
 
   override def onIceGatheringChange(identifier: String, iceGatheringState: IceGatheringState): Unit = {
@@ -77,14 +89,17 @@ with WebrtcSerializationSupport {
     redis.hset(pcId(identifier), "signal-state", signalState.name())
   }
 
-  ////////////////
-
   override def onRegistryPubInitialize(identifier: String, uuid: String, path: String): Unit = {
-    redis.hset(registryPcId(identifier, uuid), "path", path)
+    redis.sadd(registryPcsId(identifier), uuid)
+    redis.hset(registryPcId(identifier, uuid), "pub-path", path)
   }
 
   override def onRegistryPubIceConnectionChange(identifier: String, uuid: String, iceConnectionState: IceConnectionState): Unit = {
-    redis.hset(registryPcId(identifier, uuid), "pub-ice-connection-state", iceConnectionState.name())
+    if (iceConnectionState == IceConnectionState.DISCONNECTED || iceConnectionState == IceConnectionState.CLOSED) {
+      redis.srem(registryPcsId(identifier), uuid)
+    } else {
+      redis.hset(registryPcId(identifier, uuid), "pub-ice-connection-state", iceConnectionState.name())
+    }
   }
 
   override def onRegistryPubIceGatheringChange(identifier: String, uuid: String, iceGatheringState: IceGatheringState): Unit = {
@@ -101,7 +116,7 @@ with WebrtcSerializationSupport {
 
   override def onRegistrySubIceConnectionChange(identifier: String, uuid: String, iceConnectionState: IceConnectionState): Unit = {
     redis.hset(registryPcId(identifier, uuid), "sub-ice-connection-state", iceConnectionState.name())
-    if (iceConnectionState == IceConnectionState.DISCONNECTED) {
+    if (iceConnectionState == IceConnectionState.DISCONNECTED || iceConnectionState == IceConnectionState.CLOSED) {
       redis.del(registryPcId(identifier, uuid))
     }
   }
@@ -123,6 +138,6 @@ with WebrtcSerializationSupport {
   }
 
   override def onSubscribe(identifier: String, target: String, label: String): Unit = {
-    redis.sadd(pcStreamSubscribersId(identifier, label), target)
+    redis.sadd(pcStreamSubscribersId(identifier), target)
   }
 }

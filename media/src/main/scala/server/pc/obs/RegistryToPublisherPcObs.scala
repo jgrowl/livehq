@@ -52,7 +52,6 @@ class RegistryToPublisherPcObs(
     if (iceConnectionState == IceConnectionState.CONNECTED) {
       self.tell(Internal.Registry.Connected(identifier), self)
     } else if(iceConnectionState == IceConnectionState.DISCONNECTED) {
-//      self.tell(Internal.Registry.Initialize(identifier), self)
       self.tell(PoisonPill.getInstance, self)
     }
   }

@@ -42,7 +42,6 @@ package object livehq {
       case class AddStream(identifier: String, mediaStream: MediaStream) extends Command with Internal
     }
 
-//    case class AddRegistryMediaStream(identifier: String, mediaStreamId: String, mediaStream: MediaStream) extends Command with Internal
     case class AddRegistryMediaStream(mediaStreamId: String, mediaStream: MediaStream) extends Internal
 
     case class Offer(identifier: String, uuid: String, sessionDescription: SessionDescription) extends PeerConnectionCommand with Internal
@@ -50,7 +49,6 @@ package object livehq {
     case class Candidate(identifier: String, uuid: String, iceCandidate: IceCandidate) extends PeerConnectionCommand with Internal
 
     case class CreateRegistryPeerConnections(identifier: String) extends Command with Internal
-//    case class AddStream(identifier: String, mediaStream: MediaStream) extends Command with Internal
     case class CleanRegistryPeerConnections(identifier: String) extends Command with Internal
 
     case class AttachMediaStreams(identifier: String, uuid: String) extends PeerConnectionCommand with Internal
@@ -59,13 +57,10 @@ package object livehq {
   }
 
   class PcDetails(val peerConnection: PeerConnection, val webRtcHelper: WebRtcHelper) {
-//    case class PcDetails(path: String, peerConnection: PeerConnection) {
     val mMediaStreams = mutable.Map.empty[String, MediaStream]
     val mDuplicatedMediaStreams = mutable.Map.empty[String, MediaStream]
 
     def getStreamById(id: String): Option[MediaStream] = {
-      // TODO: Hard coding for testing purposes
-//      mMediaStreams.get(id)
       Some(mMediaStreams.last._2)
     }
 
