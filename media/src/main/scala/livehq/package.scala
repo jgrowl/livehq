@@ -10,20 +10,12 @@ import scala.collection.mutable
  */
 package object livehq {
 
-  sealed trait Command {
+  trait Command {
     def identifier: String
   }
 
-  sealed trait PeerConnectionCommand extends Command {
+  trait PeerConnectionCommand extends Command {
     def uuid: String
-  }
-
-  object Incoming {
-    sealed trait Incoming
-
-    case class Offer(identifier: String, sessionDescription: SessionDescription) extends Command with Incoming
-    case class Candidate(identifier: String, iceCandidate: IceCandidate) extends Command with Incoming
-    case class Subscribe(identifier: String, publisherIdentifier: String) extends Command with Incoming
   }
 
   object Internal {
@@ -53,7 +45,6 @@ package object livehq {
 
     case class AttachMediaStreams(identifier: String, uuid: String) extends PeerConnectionCommand with Internal
 
-    case class RequestPeerConnection(identifier: String, uuid: String) extends Command with Internal
   }
 
   class PcDetails(val peerConnection: PeerConnection, val webRtcHelper: WebRtcHelper) {

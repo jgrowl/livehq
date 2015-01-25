@@ -1,8 +1,11 @@
 package server.registry
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.contrib.pattern.ClusterSharding
+import server.{Publisher, Utils}
+import Publisher.RequestPeerConnection
 import livehq._
-import server.Utils
+import server.{Publisher, Utils}
 import server.pc.obs.RegistryToPublisherPcObs
 import tv.camfire.media.callback.Callback
 import tv.camfire.media.webrtc.WebRtcHelper
@@ -13,18 +16,31 @@ import scala.collection.mutable
 /**
  * Created by jonathan on 12/12/14.
  */
-class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier: String, publisher: ActorRef)
+class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier: String, subscriber: ActorRef)
   extends Actor with ActorLogging {
+
+  private val _publisherRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
+
   private val _uuid = Utils.uuid
+
   private val _pcDetails: PcDetails = _initPcDetails()
-  publisher ! Internal.RequestPeerConnection(_identifier, _uuid)
+
+//  _publisherRegion ! Internal.RequestPeerConnection(_identifier, _uuid)
+  _publisherRegion ! RequestPeerConnection(_identifier, _uuid)
+
   private val _pendingSubscribers = mutable.Set.empty[(String, ActorRef)]
   private var _connected = false
 
   override def receive: Receive = {
-    case Incoming.Subscribe(identifier: String, publisherIdentifier: String) =>
-      log.info(s"($identifier) subscribing to $publisherIdentifier.")
+    case Registry.Incoming.Subscribe(identifier: String) =>
+      log.info(s"($identifier) subscribing to ${_identifier}.")
+      _publisherRegion ! RequestPeerConnection(_identifier, _uuid)
       _addSubscriber(identifier, sender())
+
+//    case Incoming.Subscribe(identifier: String, publisherIdentifier: String) =>
+//      log.info(s"($identifier) subscribing to $publisherIdentifier.")
+//      _addSubscriber(identifier, sender())
+
     case Internal.Offer(identifier, uuid, offer) =>
       val logId = Log.registrySubPcId(identifier, uuid)
       log.info(s"$logId offer received.")
@@ -42,7 +58,7 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
       val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, identifier)
       _pcDetails.addStream(duplicatedMediaStream)
 
-    //    // TODO: Add the ability to subscribe to a single label
+    // TODO: Add the ability to subscribe to a single label
     case Internal.Registry.Connected(identifier) =>
       _connected = true
       _processPendingSubscribers()
@@ -55,7 +71,7 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
       logId,
       webRtcHelper,
       self,
-      publisher,
+      subscriber,
       callback,
       _identifier,
       _uuid)

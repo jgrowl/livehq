@@ -17,7 +17,7 @@ class Bot extends Actor with ActorLogging {
 //  val tickTask = context.system.scheduler.schedule(3.seconds, 3.seconds, self, Tick)
   val tickTask = context.system.scheduler.schedule(15.seconds, 15.seconds, self, Tick)
 
-  val connectionRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
+//  val connectionRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
 //  val listingsRegion = ClusterSharding(context.system).shardRegion(AuthorListing.shardName)
 
   val from = Cluster(context.system).selfAddress.hostPort

@@ -5,7 +5,7 @@ import com.softwaremill.macwire.Macwire
 import com.typesafe.config.ConfigFactory
 import org.webrtc.PeerConnection
 import redis.RedisClient
-import tv.camfire.media.callback.{Callback, RedisCallback}
+import tv.camfire.media.callback.{RedisSubscriberCallback, SubscriberCallback, Callback, RedisCallback}
 import tv.camfire.media.factory.CamfirePeerConnectionFactory
 import tv.camfire.media.webrtc.WebRtcHelper
 
@@ -18,9 +18,7 @@ trait LogicModule extends Macwire {
   /**
    * Utilities & Configuration
    */
-  lazy val properties = new Properties {}
-
-//  val port: String
+  lazy val properties: Properties = new Properties {}
 
   def port(): String
 
@@ -41,6 +39,7 @@ trait LogicModule extends Macwire {
 //  lazy val callback: Callback = wire[RestCallback]
   lazy val redis = RedisClient()
   lazy val callback: Callback = wire[RedisCallback]
+  lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 
 //  val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
 //    withFallback(ConfigFactory.load())

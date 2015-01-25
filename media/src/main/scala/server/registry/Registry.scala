@@ -1,11 +1,18 @@
 package server.registry
 
 import akka.actor._
-import livehq.Incoming
 import tv.camfire.media.callback.Callback
 import tv.camfire.media.webrtc.WebRtcHelper
 
 import scala.collection.mutable
+
+
+object Registry {
+  object Incoming {
+    sealed trait Incoming
+    case class Subscribe(identifier: String) extends Incoming
+  }
+}
 
 /**
  * User: jonathan
@@ -23,8 +30,8 @@ class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor wit
   })
 
   override def receive: Receive = {
-    case command: Incoming.Subscribe =>
-      _getOrCreateEntry(command.publisherIdentifier, sender()).tell(command, sender())
+    case command: Registry.Incoming.Subscribe =>
+      _getOrCreateEntry(command.identifier, sender()).tell(command, sender())
     case Terminated(ref) =>
       log.info("Removing entry...")
       _entries.remove(_entries.map(_.swap).get(ref).get)
