@@ -17,5 +17,8 @@ Rails.application.routes.draw do
 
   api_version(:module => 'Api::V1', :path => {:value => 'api/v1'}, :defaults => {:format => :json}, :default => true) do
     get '/profile' => 'user#profile'
+    get '/streams' => 'stream#all'
   end
+
+  mount MediaApi::Engine => '/', as: 'media_api'
 end

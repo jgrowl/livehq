@@ -9,6 +9,7 @@ class Ability
       can :manage, :all
     else
       can :manage, User, user_id: user.id
+      can :manage, Stream
     end
 
     # user ||= User.new # guest user (not logged in)

@@ -29,6 +29,10 @@ gem 'jwt'
 # Authorization
 gem 'cancancan', '~> 1.9'
 
+gem 'media_api', path: '../media_api'
+
+gem 'redis'
+
 # # bundle exec rake doc:rails generates the API under doc/api.
 # gem 'sdoc', '~> 0.4.0',          group: :doc
 
