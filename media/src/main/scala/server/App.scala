@@ -108,12 +108,12 @@ object App {
         case ActorIdentity(_, Some(ref)) => SharedLeveldbJournal.setStore(ref, system)
         case _ =>
           system.log.error("Shared journal not started at {}", path)
-//          system.shutdown()
+          system.shutdown()
       }
       f.onFailure {
         case _ =>
           system.log.error("Lookup of shared journal at {} timed out", path)
-//          system.shutdown()
+          system.shutdown()
       }
     }
 
