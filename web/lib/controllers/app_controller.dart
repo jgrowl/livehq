@@ -9,22 +9,22 @@ import 'package:web/services/peer_connection_service.dart';
     selector: '[app]',
     publishAs: 'ctrl')
 class AppController {
-  WebRtcSignalService _signalService;
-  PeerConnectionService _peerConnectionService;
-
-  AppController(this._signalService, this._peerConnectionService) {}
-
-  void createMediaStream() {
-    _peerConnectionService.createMediaStream();
-  }
-
-  void publishStreams() {
-    _peerConnectionService.publishStreams();
-  }
-
-  void subscribe() {
-    _peerConnectionService.subscribe();
-  }
+//  WebRtcSignalService _signalService;
+//  PeerConnectionService _peerConnectionService;
+//
+//  AppController(this._signalService, this._peerConnectionService) {}
+//
+//  void createMediaStream() {
+//    _peerConnectionService.createMediaStream();
+//  }
+//
+//  void publishStreams() {
+//    _peerConnectionService.publishStreams();
+//  }
+//
+//  void subscribe() {
+//    _peerConnectionService.subscribe();
+//  }
 
 }
 
