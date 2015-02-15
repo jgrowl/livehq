@@ -2,4 +2,8 @@
 .idea
 log
 out
+.DS_Store
+dump.rdb
+journal
+snapshots
 target
