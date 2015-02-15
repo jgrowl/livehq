@@ -86,7 +86,7 @@ class WebRtcSignalService {
 
   void subscribe() {
     // TODO: Replace with actual identifier!
-    var msg = {'type': 'media.webrtc.subscribe', 'data': {'identifier': 1}};
+    var msg = {'type': 'media.subscriber.webrtc.subscribe', 'data': {'identifier': 1}};
     send(JSON.encode(msg));
   }
 }

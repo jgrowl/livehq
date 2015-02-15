@@ -45,11 +45,11 @@ class RedisGateway
           identifier = split[1]
           data = JSON.parse(message)
           case type
-            when 'web.webrtc.answer'
+            when 'web.publisher.webrtc.answer'
               send_if_identifier(identifier, wrap_message('answer', data))
-            when 'web.webrtc.offer'
+            when 'web.publisher.webrtc.offer'
               send_if_identifier(identifier, wrap_message('offer', data))
-            when 'web.webrtc.ice-candidate'
+            when 'web.publisher.webrtc.ice-candidate'
               send_if_identifier(identifier, wrap_message('ice-candidate', data))
 
             when 'web.subscriber.webrtc.answer'
@@ -59,6 +59,7 @@ class RedisGateway
             when 'web.subscriber.webrtc.ice-candidate'
               send_if_identifier(identifier, wrap_message(type, data))
             else
+              warn "Unhandled message #{type}"
           end
         end
       end
