@@ -51,6 +51,13 @@ class RedisGateway
               send_if_identifier(identifier, wrap_message('offer', data))
             when 'web.webrtc.ice-candidate'
               send_if_identifier(identifier, wrap_message('ice-candidate', data))
+
+            when 'web.subscriber.webrtc.answer'
+              send_if_identifier(identifier, wrap_message(type, data))
+            when 'web.subscriber.webrtc.offer'
+              send_if_identifier(identifier, wrap_message(type, data))
+            when 'web.subscriber.webrtc.ice-candidate'
+              send_if_identifier(identifier, wrap_message(type, data))
             else
           end
         end

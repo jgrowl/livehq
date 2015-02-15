@@ -21,12 +21,12 @@ class RedisPublisherSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[Str
   val publisherRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
 
   def onMessage(message: Message) {
-    println(s" message received: $message")
+    log.debug(s" message received: $message")
   }
 
   def onPMessage(pmessage: PMessage) {
     val pchannel = pmessage.channel
-    log.info(s"pattern message received: $pmessage")
+    log.debug(s"pattern message received: $pmessage")
     val split = pchannel.split(":")
     val channel = split(0)
 
@@ -34,16 +34,15 @@ class RedisPublisherSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[Str
 //    val origin = if(split.length > 1) "" else split(1)
     val origin = "1"
     val data = pmessage.data
-
     channel match {
-      case "media.webrtc.offer" =>
+      case "media.publisher.webrtc.offer" =>
         val s: SessionDescription = mapper.readValue(data, classOf[SessionDescription])
         publisherRegion ! Publisher.Offer(origin, s)
-      case "media.webrtc.ice-candidate" =>
+      case "media.publisher.webrtc.ice-candidate" =>
         val c: IceCandidate = mapper.readValue(data, classOf[IceCandidate])
         publisherRegion ! Publisher.Candidate(origin, c)
       case _ =>
-        log.info("not fore me")
+        log.warning(s"Unhandled message [$channel]")
     }
   }
 }

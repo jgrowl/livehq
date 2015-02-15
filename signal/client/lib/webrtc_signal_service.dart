@@ -66,11 +66,11 @@ class WebRtcSignalService {
   }
 
   offer(RtcSessionDescription offer) {
-    send(encodeSessionDescription('media.webrtc.offer', offer));
+    send(encodeSessionDescription('media.publisher.webrtc.offer', offer));
   }
 
   encodedIceCandidate(RtcIceCandidate iceCandidate) {
-    var message = {'type': 'media.webrtc.ice-candidate', 'data': {
+    var message = {'type': 'media.publisher.webrtc.ice-candidate', 'data': {
         'candidate': iceCandidate.candidate,
         'sdpMid': iceCandidate.sdpMid,
         'sdpMLineIndex': iceCandidate.sdpMLineIndex
