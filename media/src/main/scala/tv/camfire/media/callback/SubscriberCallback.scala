@@ -1,6 +1,6 @@
 package tv.camfire.media.callback
 
-import org.webrtc.{IceCandidate, SessionDescription}
+import org.webrtc.{MediaStream, IceCandidate, SessionDescription}
 
 /**
  * Created by jonathan on 12/15/13.
@@ -12,4 +12,6 @@ trait SubscriberCallback {
   def sendOffer(identifier: String, answer: SessionDescription): Unit
 
   def sendIceCandidate(identifier: String, iceCandidate: IceCandidate): Unit
+
+  def onAddStream(identifier: String, mediaStream: MediaStream): Unit
 }

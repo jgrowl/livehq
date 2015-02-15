@@ -187,7 +187,7 @@ object Publisher {
       _incomingPeerConnection.addStream(mediaStream)
 
     case RequestPeerConnection(identifier: String, uuid: String) =>
-      log.info("HERE!")
+      log.info(s"Requesting Pc($identifier)($uuid)")
       _initRegistryPc(identifier, uuid)
 
     // Internal
@@ -217,22 +217,21 @@ object Publisher {
       }
       _init()
 
-    case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
-      log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
-      _incomingPeerConnection.peerConnection.addStream(mediaStream, webRtcHelper.createConstraints)
-
-      // Update offer
-      val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)
-      if (offer.isDefined) {
-        log.info(s"Added MediaStream(${mediaStream.label()}). Sending updated offer.")
-        callback.sendOffer(_identifier, offer.get)
-      } else {
-        log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
-      }
+//    case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
+//      log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
+//      _incomingPeerConnection.peerConnection.addStream(mediaStream, webRtcHelper.createConstraints)
+//
+//      // Update offer
+//      val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)
+//      if (offer.isDefined) {
+//        log.info(s"Added MediaStream(${mediaStream.label()}). Sending updated offer.")
+//        callback.sendOffer(_identifier, offer.get)
+//      } else {
+//        log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
+//      }
 
     case _ =>
       log.info("Received unknown message!")
-
   }
 
   def _initRegistryPc(identifier: String, uuid: String): Unit = {

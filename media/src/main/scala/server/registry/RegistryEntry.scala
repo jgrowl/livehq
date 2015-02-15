@@ -16,7 +16,7 @@ import scala.collection.mutable
 /**
  * Created by jonathan on 12/12/14.
  */
-class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier: String, subscriber: ActorRef)
+class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier: String)
   extends Actor with ActorLogging {
 
   private val _publisherRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
@@ -25,7 +25,6 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
 
   private val _pcDetails: PcDetails = _initPcDetails()
 
-//  _publisherRegion ! Internal.RequestPeerConnection(_identifier, _uuid)
   _publisherRegion ! RequestPeerConnection(_identifier, _uuid)
 
   private val _pendingSubscribers = mutable.Set.empty[(String, ActorRef)]
@@ -34,12 +33,7 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
   override def receive: Receive = {
     case Registry.Incoming.Subscribe(identifier: String) =>
       log.info(s"($identifier) subscribing to ${_identifier}.")
-      _publisherRegion ! RequestPeerConnection(_identifier, _uuid)
       _addSubscriber(identifier, sender())
-
-//    case Incoming.Subscribe(identifier: String, publisherIdentifier: String) =>
-//      log.info(s"($identifier) subscribing to $publisherIdentifier.")
-//      _addSubscriber(identifier, sender())
 
     case Internal.Offer(identifier, uuid, offer) =>
       val logId = Log.registrySubPcId(identifier, uuid)
@@ -55,9 +49,9 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
       log.info(s"$logId candidate received.")
       _pcDetails.peerConnection.addIceCandidate(candidate)
     case Internal.Registry.AddStream(identifier, mediaStream) =>
+      log.info(s"Adding stream ${mediaStream.label()}.")
       val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, identifier)
       _pcDetails.addStream(duplicatedMediaStream)
-
     // TODO: Add the ability to subscribe to a single label
     case Internal.Registry.Connected(identifier) =>
       _connected = true
@@ -71,7 +65,6 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
       logId,
       webRtcHelper,
       self,
-      subscriber,
       callback,
       _identifier,
       _uuid)

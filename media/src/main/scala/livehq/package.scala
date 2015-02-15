@@ -24,7 +24,6 @@ package object livehq {
     object Publisher {
       sealed trait Publisher
       case class AddStream(identifier: String, mediaStream: MediaStream) extends Command with Internal with Publisher
-
     }
 
     object Registry {
@@ -44,7 +43,6 @@ package object livehq {
     case class CleanRegistryPeerConnections(identifier: String) extends Command with Internal
 
     case class AttachMediaStreams(identifier: String, uuid: String) extends PeerConnectionCommand with Internal
-
   }
 
   class PcDetails(val peerConnection: PeerConnection, val webRtcHelper: WebRtcHelper) {

@@ -36,9 +36,9 @@ class RedisSubscriberSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[St
     val data = pmessage.data
 
     channel match {
-      case "media.subscriber.webrtc.offer" =>
+      case "media.subscriber.webrtc.answer" =>
         val s: SessionDescription = mapper.readValue(data, classOf[SessionDescription])
-        subscriberRegion ! Subscriber.Offer(origin, s)
+        subscriberRegion ! Subscriber.Answer(origin, s)
       case "media.subscriber.webrtc.ice-candidate" =>
         val c: IceCandidate = mapper.readValue(data, classOf[IceCandidate])
         subscriberRegion ! Subscriber.Candidate(origin, c)

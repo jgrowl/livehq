@@ -51,9 +51,10 @@ with WebrtcSerializationSupport {
 //  }
 //
 //
-//  override def onAddStream(identifier: String, mediaStream: MediaStream): Unit = {
+  override def onAddStream(identifier: String, mediaStream: MediaStream): Unit = {
+
 //    redis.sadd(pcStreamsId(identifier), mediaStream.label())
-//  }
+  }
 //
 //  override def onRemoveStream(identifier: String, mediaStream: MediaStream): Unit = {
 //    redis.srem(pcStreamsId(identifier), mediaStream.label())

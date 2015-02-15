@@ -1,6 +1,6 @@
 package server
 
-import akka.actor.{ActorIdentity, ActorPath, ActorSystem, Identify, Props}
+import akka.actor._
 import akka.contrib.pattern.ClusterSharding
 import akka.pattern.ask
 import akka.persistence.journal.leveldb.{SharedLeveldbJournal, SharedLeveldbStore}
@@ -14,13 +14,13 @@ import scala.concurrent.duration._
 object App {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty)
-//      startup(Seq("2551", "2552"))
         startup(Seq("2551", "2552", "2553", "2554"))
     else
       startup(args)
   }
 
   def sharedJournalPort = "2551"
+  var ref: ActorRef = null
 
   def startup(ports: Seq[String]): Unit = {
     ports foreach { _port =>
@@ -41,7 +41,14 @@ object App {
             typeName = Publisher.shardName,
             entryProps = Some(Publisher.props(modules.webRtcHelper, modules.callback)),
             idExtractor = Publisher.idExtractor,
-            shardResolver = Publisher.shardResolver)
+            shardResolver = Publisher.shardResolver
+          )
+
+          ClusterSharding(system).start(
+            typeName = Subscriber.shardName,
+            entryProps = None, // Starting in Proxy mode
+            idExtractor = Subscriber.idExtractor,
+            shardResolver = Subscriber.shardResolver)
         case "2552" =>
           ClusterSharding(system).start(
             typeName = Publisher.shardName,
@@ -95,26 +102,35 @@ object App {
       }
     }
 
+
     def startupSharedJournal(system: ActorSystem, startStore: Boolean, path: ActorPath, name: String="store"): Unit = {
       // Start the shared journal one one node (don't crash this SPOF)
       // This will not be needed with a distributed journal
       if (startStore)
-        system.actorOf(Props[SharedLeveldbStore], name)
+        ref = system.actorOf(Props[SharedLeveldbStore], name)
       // register the shared journal
-      import system.dispatcher
-      implicit val timeout = Timeout(15.seconds)
-      val f = (system.actorSelection(path) ? Identify(None))
-      f.onSuccess {
-        case ActorIdentity(_, Some(ref)) => SharedLeveldbJournal.setStore(ref, system)
-        case _ =>
-          system.log.error("Shared journal not started at {}", path)
-          system.shutdown()
-      }
-      f.onFailure {
-        case _ =>
-          system.log.error("Lookup of shared journal at {} timed out", path)
-          system.shutdown()
-      }
+//      import system.dispatcher
+//      implicit val timeout = Timeout(25.seconds)
+//      val f = (system.actorSelection(path) ? Identify(None))
+//      f.onSuccess {
+//        case ActorIdentity(_, Some(ref)) => SharedLeveldbJournal.setStore(ref, system)
+//        case _ =>
+//          system.log.error("Shared journal not started at {}", path)
+//          system.shutdown()
+//      }
+//      f.onFailure {
+//        case _ =>
+//          system.log.error("Lookup of shared journal at {} timed out", path)
+//          system.shutdown()
+//      }
+
+        SharedLeveldbJournal.setStore(ref, system)
+
+
+//      case ActorIdentity(_, Some(actorRef)) =>
+//      ref = actorRef
+//      context watch ref
+//      case ActorIdentity(_, None) => // not alive
     }
 
   }
