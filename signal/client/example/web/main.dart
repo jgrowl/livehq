@@ -24,8 +24,10 @@ final Logger log = new Logger('Main');
 
   initWebSocket().then((webSocket) {
     var signalHandler = new WebSocketSignalHandler.fromWebSocket(webSocket);
-    var publisher = new Publisher(signalHandler);
-    var subscriber = new Subscriber(signalHandler);
+    var factory = new PublisherSubscriberFactory(signalHandler);
+
+    var publisher = factory.createPublisher("1");
+    var subscriber = factory.createSubscriber("1");
 
     ButtonElement startCamera = query("#start-camera");
     startCamera.onClick.listen((event) => publisher.createMediaStream());
@@ -39,10 +41,8 @@ final Logger log = new Logger('Main');
     ButtonElement publish = query("#publish");
     publish.onClick.listen((event) => publisher.publishStreams());
 
-
     ButtonElement subscribe = query("#subscribe");
-    subscribe.onClick.listen((event) => subscriber.subscribe("1"));
-
+    subscribe.onClick.listen((event) => subscriber.subscribe());
 
 //    // Testing code
 //    VideoElement pc1Video = query("#pc1_video");

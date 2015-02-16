@@ -14,7 +14,9 @@ class Publisher {
 
   RtcPeerConnection _peerConnection;
 
-  Publisher(this._signalHandler, {this.webRtcConfig}) {
+  String _identifier;
+
+  Publisher(this._identifier, this._signalHandler, [this.webRtcConfig]) {
     log.finest("Creating publisher...");
 
     if (this.webRtcConfig == null) {
@@ -106,8 +108,4 @@ class Publisher {
       });
     });
   }
-
-//  void subscribe() {
-//    _signalHandler.subscribe();
-//  }
 }

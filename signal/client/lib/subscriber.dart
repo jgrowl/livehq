@@ -11,7 +11,9 @@ class Subscriber {
 
   RtcPeerConnection _peerConnection;
 
-  Subscriber(this._signalHandler, {this.webRtcConfig}) {
+  String _identifier;
+
+  Subscriber(this._identifier, this._signalHandler, [this.webRtcConfig]) {
     log.finest("Creating subscriber...");
 
     if (this.webRtcConfig == null) {
@@ -65,14 +67,11 @@ class Subscriber {
 //      String url = Url.createObjectUrl(e.stream);
 //      pc1Video.src = url;
 
-
     var video = new VideoElement()
       ..autoplay = true
       ..src = Url.createObjectUrl(e.stream)
-      ..onLoadedMetadata.listen((e) => print("Event: ${e.type}"));
-    document.body.append(video);
-
-
+      ..onLoadedMetadata.listen((e) => log.info("onLoadedMetaData: ${e.type} "));
+      document.body.append(video);
     });
 
     pc.onRemoveStream.listen((e) {
@@ -103,7 +102,7 @@ class Subscriber {
     });
   }
 
-  void subscribe(String identifier) {
-    _signalHandler.send(Signal.encoded(Signal.subscribe, {'identifier': identifier}));
+  void subscribe() {
+    _signalHandler.send(Signal.encoded(Signal.subscribe, {'identifier': _identifier}));
   }
 }

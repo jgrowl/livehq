@@ -10,6 +10,7 @@ part 'signal_handler.dart';
 part 'web_socket_signal_handler.dart';
 part 'publisher.dart';
 part 'subscriber.dart';
+part 'publisher_subscriber_factory.dart';
 
 
 class Signal {
