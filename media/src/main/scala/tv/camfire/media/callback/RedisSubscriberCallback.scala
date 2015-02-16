@@ -15,7 +15,6 @@ import tv.camfire.webrtc.serialization.jackson.WebrtcSerializationSupport
 class RedisSubscriberCallback(properties: Properties, redis: RedisClient)() extends SubscriberCallback with jackson.JsonMethods
 with WebrtcSerializationSupport {
 
-
 //  val log = LoggerFactory.getLogger(getClass)
 //
 //  def pcsId: String= {

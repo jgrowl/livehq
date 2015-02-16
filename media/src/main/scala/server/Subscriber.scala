@@ -5,7 +5,7 @@ import akka.contrib.pattern.ShardRegion
 import akka.event.LoggingAdapter
 import akka.persistence.PersistentActor
 import livehq._
-import org.webrtc.{MediaStream, IceCandidate, SessionDescription}
+import org.webrtc.{IceCandidate, SessionDescription}
 import server.pc.obs.SubscriberPcObs
 import server.registry.Registry
 import tv.camfire.media.callback.SubscriberCallback
@@ -52,7 +52,6 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
       _identifier
     )), webRtcHelper)
 
-
   //  // passivate the entity when no activity
   //  context.setReceiveTimeout(2.minutes)
   //
@@ -75,7 +74,7 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
   //  }
   override def receiveRecover: Receive = {
     case _ =>
-      println("not implemented")
+      log.warning("Recovery not yet implemented!")
   }
 
   override def receiveCommand: Receive = {
@@ -83,36 +82,13 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
       log.info(s"$pcId Subscribe received. ($identifier -> $publisherIdentifier)")
       context.system.actorSelection("user/registry") ! Registry.Incoming.Subscribe(publisherIdentifier)
 
-//    case Subscriber.Offer(identifier, offer) =>
-//      log.info(s"$pcId Offer received. [${Utils.stripNewline(offer.toString)}")
-//      val answer = webRtcHelper.createAnswer(_incomingPeerConnection.peerConnection, offer)
-//      if (answer.isDefined) {
-//        log.info(s"$pcId Answer created successfully. [${Utils.stripNewline(answer.get.toString)}]")
-//        subscriberCallback.sendAnswer(identifier, answer.get)
-//      } else {
-//        log.error(s"$pcId Failed to create answer! No answer will be sent back!")
-//      }
-
     case Subscriber.Answer(identifier, answer) =>
       log.info(s"$pcId Answer received. [${Utils.stripNewline(answer.toString)}")
       webRtcHelper.setRemoteDescription(_incomingPeerConnection.peerConnection, answer)
 
-//      val answer = webRtcHelper.createAnswer(_incomingPeerConnection.peerConnection, answer)
-//      if (answer.isDefined) {
-//        log.info(s"$pcId Answer created successfully. [${Utils.stripNewline(answer.get.toString)}]")
-//        subscriberCallback.sendAnswer(identifier, answer.get)
-//      } else {
-//        log.error(s"$pcId Failed to create answer! No answer will be sent back!")
-//      }
-
     case Subscriber.Candidate(identifier, candidate) =>
       log.info(s"$pcId Candidate received. [${Utils.stripNewline(candidate.toString)}")
       _incomingPeerConnection.peerConnection.addIceCandidate(candidate)
-
-//    case Internal.Publisher.AddStream(identifier, mediaStream) =>
-//      log.info(s"Adding MediaStream2 $identifier.")
-//      _incomingPeerConnection.addStream(mediaStream)
-
 
     case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
       log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
@@ -126,14 +102,6 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
       } else {
         log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
       }
-
-//    // Internal
-//    case Internal.Candidate(identifier, uuid, candidate) =>
-//      log.info(s"$pcId Internal.Candidate received for ($uuid). [${Utils.stripNewline(candidate.toString)}]")
-//      _registryPeerConnections.get(uuid).get.peerConnection.addIceCandidate(candidate)
-//    case Internal.Answer(identifier, uuid, answer) =>
-//      log.info(s"$pcId Internal.Answer received for ($uuid). [${Utils.stripNewline(answer.toString)}]")
-//      webRtcHelper.setRemoteDescription(_registryPeerConnections.get(uuid).get.peerConnection, answer)
 
     //
     //        case Internal.CleanRegistryPeerConnections(identifier) =>
@@ -164,8 +132,6 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
 
     case _ =>
       log.warning("Received unknown message!")
-
-
   }
 
   def _identifier = self.path.name
