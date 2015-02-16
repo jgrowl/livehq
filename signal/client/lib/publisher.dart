@@ -9,15 +9,12 @@ class Publisher {
 
   List<MediaStream> _mediaStreams = new List<MediaStream>();
 
-  // TODO: Move this to a subscriber class
-  List<MediaStream> _subscribedMediaStreams = new List<MediaStream>();
-
   RtcPeerConnection _peerConnection;
 
   String _identifier;
 
   Publisher(this._identifier, this._signalHandler, [this.webRtcConfig]) {
-    log.finest("Creating publisher...");
+    log.finest("Initializing Publisher($_identifier).");
 
     if (this.webRtcConfig == null) {
       this.webRtcConfig = new WebRtcConfig();
@@ -75,12 +72,11 @@ class Publisher {
     });
 
     pc.onAddStream.listen((MediaStreamEvent e) {
-      _subscribedMediaStreams.add(e.stream);
+      log.warning("onAddStream should not get called from a Publisher!");
     });
 
     pc.onRemoveStream.listen((e) {
-      print("onRemoveStream");
-      _subscribedMediaStreams.remove(e.stream);
+      log.warning("onRemoveStream should not get called from a Publisher!");
     });
 
     pc.onIceConnectionStateChange.listen((Event e) {
