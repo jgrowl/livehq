@@ -39,9 +39,6 @@ class WebsocketClient
         publish 'publish_on_redis', "#{type}:#{@id}", data
       when 'media.publisher.webrtc.ice-candidate'
         publish 'publish_on_redis', "#{type}:#{@id}", data
-      # when 'media.webrtc.subscribe'
-      #   publish 'publish_on_redis', "#{type}:#{@id}", data
-
 
       when 'web.subscriber.webrtc.offer'
         publish 'publish_on_redis', "#{type}:#{@id}", data
