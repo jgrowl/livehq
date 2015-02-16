@@ -49,15 +49,15 @@ with WebrtcSerializationSupport {
   }
 
   override def sendAnswer(identifier: String, answer: SessionDescription): Unit = {
-    redis.publish("web.webrtc.answer:%s".format(identifier), mapper.writeValueAsString(answer))
+    redis.publish("web.publisher.webrtc.answer:%s".format(identifier), mapper.writeValueAsString(answer))
   }
 
   override def sendOffer(identifier: String, answer: SessionDescription): Unit = {
-    redis.publish("web.webrtc.offer:%s".format(identifier), mapper.writeValueAsString(answer))
+    redis.publish("web.publisher.webrtc.offer:%s".format(identifier), mapper.writeValueAsString(answer))
   }
 
   override def sendIceCandidate(identifier: String, iceCandidate: IceCandidate): Unit = {
-    redis.publish("web.webrtc.ice-candidate:%s".format(identifier), mapper.writeValueAsString(iceCandidate))
+    redis.publish("web.publisher.webrtc.ice-candidate:%s".format(identifier), mapper.writeValueAsString(iceCandidate))
   }
 
   override def onAddStream(identifier: String, mediaStream: MediaStream): Unit = {

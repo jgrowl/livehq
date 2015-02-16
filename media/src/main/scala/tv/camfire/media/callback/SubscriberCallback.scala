@@ -1,5 +1,6 @@
 package tv.camfire.media.callback
 
+import org.webrtc.PeerConnection.IceConnectionState
 import org.webrtc.{MediaStream, IceCandidate, SessionDescription}
 
 /**
@@ -14,4 +15,6 @@ trait SubscriberCallback {
   def sendIceCandidate(identifier: String, iceCandidate: IceCandidate): Unit
 
   def onAddStream(identifier: String, mediaStream: MediaStream): Unit
+
+  def onIceConnectionChange(identifier: String, iceConnectionState: IceConnectionState): Unit
 }

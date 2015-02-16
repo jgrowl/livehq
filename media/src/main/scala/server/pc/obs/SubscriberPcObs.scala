@@ -1,6 +1,6 @@
 package server.pc.obs
 
-import akka.actor.ActorRef
+import akka.actor.{PoisonPill, ActorRef}
 import akka.event.LoggingAdapter
 import org.webrtc.PeerConnection.{IceConnectionState, IceGatheringState, SignalingState}
 import org.webrtc.{DataChannel, IceCandidate, MediaStream, PeerConnection}
@@ -43,11 +43,11 @@ class SubscriberPcObs(
 
   override def onIceConnectionChange(iceConnectionState: IceConnectionState): Unit = {
     log.info(s"$pcId.onIceConnectionChange : [${iceConnectionState.name()}].")
-//    callback.onIceConnectionChange(identifier, iceConnectionState)
-//    if (iceConnectionState == IceConnectionState.CONNECTED) {
-//    } else if (iceConnectionState == IceConnectionState.DISCONNECTED) {
-//      self.tell(Internal.CleanRegistryPeerConnections(identifier), self)
-//    }
+    callback.onIceConnectionChange(identifier, iceConnectionState)
+    if (iceConnectionState == IceConnectionState.CONNECTED) {
+    } else if (iceConnectionState == IceConnectionState.DISCONNECTED) {
+      self.tell(PoisonPill.getInstance, self)
+    }
   }
 
   override def onAddStream(mediaStream: MediaStream): Unit = {

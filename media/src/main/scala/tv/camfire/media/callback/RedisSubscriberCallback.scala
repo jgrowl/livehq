@@ -145,4 +145,7 @@ with WebrtcSerializationSupport {
       redis.publish("web.subscriber.webrtc.ice-candidate:%s".format(identifier), mapper.writeValueAsString(iceCandidate))
     }
 
+  override def onIceConnectionChange(identifier: String, iceConnectionState: IceConnectionState): Unit = {
+
+  }
 }
