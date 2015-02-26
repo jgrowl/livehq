@@ -41,10 +41,7 @@ class RedisGateway
   end
 
   def resolve_origin(identifier)
-    origin = @redis.get("origin:#{identifier}")
-    warn 'HITHERE'
-    warn origin
-    origin
+    @redis.get("origin:#{identifier}")
   end
 
   def run
