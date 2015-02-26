@@ -215,6 +215,7 @@ object Publisher {
           pcDetail.peerConnection.close()
         }
       }
+      // TODO: We shouldn't re-init here. Instead we should become a state that doesn't accept new messages!
       _init()
 
 //    case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
