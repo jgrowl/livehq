@@ -57,7 +57,7 @@ object App {
             shardResolver = Publisher.shardResolver)
 
           val channels = Seq()
-          val patterns = Seq("media.*")
+          val patterns = Seq("media.publisher.*")
           system.actorOf(Props(classOf[RedisPublisherSignalMonitor], channels, patterns)
             .withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
         case "2553" =>
