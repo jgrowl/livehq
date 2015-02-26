@@ -93,7 +93,7 @@ class Publisher {
     });
 
     pc.onIceConnectionStateChange.listen((Event e) {
-      log.info("Publisher.onIceCOnnectionStateChange: ${e.type}");
+      log.info("Publisher.onIceConnectionStateChange: ${pc.iceConnectionState}");
     });
 
 //    pc.onDataChannel.listen((e) {
