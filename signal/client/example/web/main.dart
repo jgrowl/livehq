@@ -6,7 +6,9 @@ import 'package:logging/logging.dart';
 import 'package:webrtc-signal/webrtc_signal.dart';
 
 void main() {
-  Logger.root.onRecord.listen((LogRecord r) { print(r.message); });
+  Logger.root.onRecord.listen((LogRecord r) {
+    print("${r.time}\t${r.toString()}");
+  });
   Logger.root.level = Level.FINEST;
   final Logger log = new Logger('Main');
   Future<WebSocket> initWebSocket() {
