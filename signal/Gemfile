@@ -4,7 +4,6 @@ gem 'reel-rack'
 gem 'celluloid-redis'
 gem 'json'
 
-
 #gem 'celluloid',    github: 'celluloid/celluloid'
 #gem 'celluloid-io', github: 'celluloid/celluloid-io'
 #gem 'http',         github: 'tarcieri/http'

@@ -29,18 +29,16 @@ class RedisPublisherSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[Str
     log.debug(s"pattern message received: $pmessage")
     val split = pchannel.split(":")
     val channel = split(0)
-
-    // TODO: Change this back. Only using 1 as origin as means of testing
-//    val origin = if(split.length > 1) "" else split(1)
-    val origin = "1"
+    val identifier = split(1)
     val data = pmessage.data
+
     channel match {
       case "media.publisher.webrtc.offer" =>
         val s: SessionDescription = mapper.readValue(data, classOf[SessionDescription])
-        publisherRegion ! Publisher.Offer(origin, s)
+        publisherRegion ! Publisher.Offer(identifier, s)
       case "media.publisher.webrtc.ice-candidate" =>
         val c: IceCandidate = mapper.readValue(data, classOf[IceCandidate])
-        publisherRegion ! Publisher.Candidate(origin, c)
+        publisherRegion ! Publisher.Candidate(identifier, c)
       case _ =>
         log.warning(s"Unhandled message [$channel]")
     }

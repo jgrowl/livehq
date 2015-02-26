@@ -7,8 +7,8 @@ import 'package:webrtc-signal/webrtc_signal.dart';
 
 void main() {
   Logger.root.onRecord.listen((LogRecord r) { print(r.message); });
-Logger.root.level = Level.FINEST;
-final Logger log = new Logger('Main');
+  Logger.root.level = Level.FINEST;
+  final Logger log = new Logger('Main');
   Future<WebSocket> initWebSocket() {
     Completer completer = new Completer();
 
@@ -24,25 +24,29 @@ final Logger log = new Logger('Main');
 
   initWebSocket().then((webSocket) {
     var signalHandler = new WebSocketSignalHandler.fromWebSocket(webSocket);
-    var factory = new PublisherSubscriberFactory(signalHandler);
 
-    var publisher = factory.createPublisher("1");
-    var subscriber = factory.createSubscriber("1");
+    var identifierResolver = new RestfulIdentifierResolver();
+    var factory = new PublisherSubscriberFactory(signalHandler, identifierResolver);
 
-    ButtonElement startCamera = query("#start-camera");
-    startCamera.onClick.listen((event) => publisher.createMediaStream());
+    factory.createPublisher().then((publisher) {
+      ButtonElement startCamera = query("#start-camera");
+      startCamera.onClick.listen((event) => publisher.createMediaStream());
+
+      ButtonElement publish = query("#publish");
+      publish.onClick.listen((event) => publisher.publishStreams());
+
+      factory.createSubscriber(publisher.identifier).then((subscriber) {
+        ButtonElement subscribe = query("#subscribe");
+        subscribe.onClick.listen((event) => subscriber.subscribe());
+      });
+    });
+
 
 //    var video = new VideoElement()
 //      ..autoplay = true
 //      ..src = Url.createObjectUrl(stream)
 //      ..onLoadedMetadata.listen((e) => print(e));
 //    document.body.append(video);
-
-    ButtonElement publish = query("#publish");
-    publish.onClick.listen((event) => publisher.publishStreams());
-
-    ButtonElement subscribe = query("#subscribe");
-    subscribe.onClick.listen((event) => subscriber.subscribe());
 
 //    // Testing code
 //    VideoElement pc1Video = query("#pc1_video");

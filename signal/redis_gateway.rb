@@ -20,10 +20,15 @@ class RedisGateway
     subscribe('socket_created', :socket_created)
     subscribe('socket_closed', :socket_closed)
     subscribe('publish_on_redis', :publish_on_redis)
+    subscribe('register_identifier', :register_identifier)
   end
 
   def publish_on_redis(topic, channel, data)
     @redis.publish channel, data
+  end
+
+  def register_identifier(topic, identifier, origin)
+    @redis.set("origin:#{identifier}", origin)
   end
 
   def socket_created(topic, id, socket)
@@ -35,6 +40,13 @@ class RedisGateway
     @sockets.delete(id)
   end
 
+  def resolve_origin(identifier)
+    origin = @redis.get("origin:#{identifier}")
+    warn 'HITHERE'
+    warn origin
+    origin
+  end
+
   def run
     defer {
       redis = ::Redis.new(:timeout => 0, :driver => :celluloid)
@@ -43,21 +55,23 @@ class RedisGateway
           split = channel.split(':')
           type = split[0]
           identifier = split[1]
+          origin = resolve_origin(identifier)
+
           data = JSON.parse(message)
           case type
             when 'web.publisher.webrtc.answer'
-              send_if_identifier(identifier, wrap_message('answer', data))
+              send_if_origin(origin, wrap_message(identifier, 'answer', data))
             when 'web.publisher.webrtc.offer'
-              send_if_identifier(identifier, wrap_message('offer', data))
+              send_if_origin(origin, wrap_message(identifier, 'offer', data))
             when 'web.publisher.webrtc.ice-candidate'
-              send_if_identifier(identifier, wrap_message('ice-candidate', data))
+              send_if_origin(origin, wrap_message(identifier, 'ice-candidate', data))
 
             when 'web.subscriber.webrtc.answer'
-              send_if_identifier(identifier, wrap_message(type, data))
+              send_if_origin(origin, wrap_message(identifier, type, data))
             when 'web.subscriber.webrtc.offer'
-              send_if_identifier(identifier, wrap_message(type, data))
+              send_if_origin(origin, wrap_message(identifier, type, data))
             when 'web.subscriber.webrtc.ice-candidate'
-              send_if_identifier(identifier, wrap_message(type, data))
+              send_if_origin(origin, wrap_message(identifier, type, data))
             else
               warn "Unhandled message #{type}"
           end
@@ -68,15 +82,14 @@ class RedisGateway
     error e.message
   end
 
-  def wrap_message(type, data)
-    JSON.generate({:type => type, :data => data})
+  def wrap_message(identifier, type, data)
+    JSON.generate({:identifier => identifier, :type => type, :data => data})
   end
 
-  def send_if_identifier(identifier, data)
-    if @sockets.key?(identifier)
-      @sockets[identifier] << data
+  def send_if_origin(origin, data)
+    if @sockets.key?(origin)
+      @sockets[origin] << data
     end
-
   end
   #
   # def handle(channel, msg)

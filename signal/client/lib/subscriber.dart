@@ -11,10 +11,12 @@ class Subscriber {
 
   RtcPeerConnection _peerConnection;
 
-  String _identifier;
+  String identifier;
 
-  Subscriber(this._identifier, this._signalHandler, [this.webRtcConfig]) {
-    log.finest("Creating subscriber...");
+  String publisherIdentifier;
+
+  Subscriber(this.identifier, this.publisherIdentifier, this._signalHandler, [this.webRtcConfig]) {
+    log.info("Initializing Subscriber($identifier)...");
 
     if (this.webRtcConfig == null) {
       this.webRtcConfig = new WebRtcConfig();
@@ -27,18 +29,22 @@ class Subscriber {
 
   void _listenToMessages() {
     _signalHandler.onMessage.listen((Message message) {
+      if (message.identifier == identifier) {
+
 //      log.finest("Subscriber Message ${message.type} received. [${message.data}]}");
       switch (message.type) {
         case Signal.subscriberOffer:
           RtcSessionDescription offer = new RtcSessionDescription(message.data);
-          _createAnswer(_peerConnection, offer).then((RtcSessionDescription answer){
-            _signalHandler.subscriberAnswer(answer);
+          _createAnswer(_peerConnection, offer).then((RtcSessionDescription answer) {
+            _signalHandler.subscriberAnswer(identifier, answer);
           });
           break;
         case Signal.subscriberCandidate:
           RtcIceCandidate iceCandidate = new RtcIceCandidate(message.data);
-          _peerConnection.addIceCandidate(iceCandidate, () {}, (String error) {
-            log.severe("Error adding IceCandidate: $error");
+          _peerConnection.addIceCandidate(iceCandidate, () {
+            log.fine("IceCandidate added successfully.");
+          }, (String error) {
+            log.severe("Error adding IceCandidate! [$error]");
           });
           break;
         case Signal.subscriberAnswer:
@@ -46,15 +52,17 @@ class Subscriber {
           _peerConnection.setRemoteDescription(answer);
           break;
         default:
-      }});
-    log.finest("Subscriber Now listening for messages.");
+      }
+    }
+    });
+    log.finest("Subscriber($identifier) listening for messages.");
   }
 
   _createPeerConnection() {
     var pc = new RtcPeerConnection(webRtcConfig.iceServers, webRtcConfig.dataConfig);
     pc.onIceCandidate.listen((e) {
       if (e.candidate != null) {
-        _signalHandler.sendSubscriberIceCandidate(e.candidate);
+        _signalHandler.sendSubscriberIceCandidate(identifier, e.candidate);
       }
     });
 
@@ -70,7 +78,7 @@ class Subscriber {
     var video = new VideoElement()
       ..autoplay = true
       ..src = Url.createObjectUrl(e.stream)
-      ..onLoadedMetadata.listen((e) => log.info("onLoadedMetaData: ${e.type} "));
+      ..onLoadedMetadata.listen((e) => log.fine("onLoadedMetaData: ${e.type} "));
       document.body.append(video);
     });
 
@@ -103,6 +111,6 @@ class Subscriber {
   }
 
   void subscribe() {
-    _signalHandler.send(Signal.encoded(Signal.subscribe, {'identifier': _identifier}));
+    _signalHandler.send(Signal.encoded(identifier, Signal.subscribe, {'publisherIdentifier': publisherIdentifier}));
   }
 }

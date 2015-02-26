@@ -6,19 +6,31 @@ class PublisherSubscriberFactory {
   WebRtcConfig webRtcConfig;
 
   SignalHandler _signalHandler;
+  IdentifierResolver _identifierResolver;
 
-  PublisherSubscriberFactory(this._signalHandler, [this.webRtcConfig]) {
+  PublisherSubscriberFactory(this._signalHandler, this._identifierResolver, [this.webRtcConfig]) {
     if (this.webRtcConfig == null) {
       this.webRtcConfig = new WebRtcConfig();
     }
   }
 
-  Publisher createPublisher(String identifier) {
-    return new Publisher(identifier, _signalHandler, webRtcConfig);
+  Future<Publisher> createPublisher() {
+    var completer = new Completer<Publisher>();
+    _identifierResolver.create().then((identifier) {
+      completer.complete(new Publisher(identifier, _signalHandler, webRtcConfig));
+    });
+
+    return completer.future;
   }
 
-  Subscriber createSubscriber(String identifier) {
-    return new Subscriber(identifier, _signalHandler, webRtcConfig);
+  Future<Subscriber> createSubscriber(String publisherIdentifier) {
+    var completer = new Completer<Subscriber>();
+
+    _identifierResolver.create().then((identifier) {
+      completer.complete(new Subscriber(identifier, publisherIdentifier, _signalHandler, webRtcConfig));
+    });
+
+    return completer.future;
   }
 
 }

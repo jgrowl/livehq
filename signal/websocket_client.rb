@@ -12,9 +12,8 @@ class WebsocketClient
   include Celluloid::Logger
 
   def initialize(websocket)
-    # @id = SecureRandom.hex(10)
-    @id = '1'
-    info 'Streaming changes to client'
+    @id = SecureRandom.hex(10)
+    info "Streaming changes to client(#{@id})"
     @socket = websocket
     @socket.on_message do |msg|
       info "message: #{msg}"
@@ -30,29 +29,42 @@ class WebsocketClient
     async.run
   end
 
+  def missing_keys(hash)
+    !(hash.has_key('type') && hash.has_key('identifier'))
+  end
+
   def handle_message(msg)
     json = JSON.parse(msg)
     type = json['type']
+    identifier = json['identifier']
+    # TODO: It might be wise to log something if there are missing keys!
+    return if type.nil? || identifier.nil?
     data = JSON.generate(json['data'])
     case type
       when 'media.publisher.webrtc.offer'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        # Doing this might cause a race condition. I might need to ensure that this completes before I publish
+        # the offer.
+        publish 'register_identifier', identifier, @id
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
       when 'media.publisher.webrtc.ice-candidate'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
-
+        publish 'register_identifier', identifier, @id
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
       when 'web.subscriber.webrtc.offer'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
       when 'web.subscriber.webrtc.ice-candidate'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        publish 'register_identifier', identifier, @id
       when 'web.subscriber.webrtc.answer'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
 
       when 'media.subscriber.webrtc.subscribe'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        publish 'register_identifier', identifier, @id
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
       when 'media.subscriber.webrtc.answer'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        publish 'register_identifier', identifier, @id
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
       when 'media.subscriber.webrtc.ice-candidate'
-        publish 'publish_on_redis', "#{type}:#{@id}", data
+        publish 'register_identifier', identifier, @id
+        publish 'publish_on_redis', "#{type}:#{identifier}", data
 
       else
         warn "Unknown message: [#{type}]"
@@ -63,7 +75,7 @@ class WebsocketClient
   end
 
   def run
-    @socket.read_every(1)
+    @socket.read_every 0.1
     rescue Reel::SocketError, EOFError
       info "WS client disconnected"
       terminate

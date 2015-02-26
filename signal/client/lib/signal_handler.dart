@@ -17,26 +17,26 @@ abstract class SignalHandler {
 
   /// Concrete Methods
   void onSignal(Map message) {
+    String identifier = message['identifier'];
     String type = message['type'];
     Map data = message['data'];
-    onMessageController.add(new Message(type, data));
+    onMessageController.add(new Message(identifier, type, data));
   }
 
-
-  void sendIceCandidate(RtcIceCandidate iceCandidate) {
-    send(encodedIceCandidate(iceCandidate));
+  void sendIceCandidate(String identifier, RtcIceCandidate iceCandidate) {
+    send(encodedIceCandidate(identifier, iceCandidate));
   }
 
-  void offer(RtcSessionDescription offer) {
-    send(encodeSessionDescription('media.publisher.webrtc.offer', offer));
+  void offer(String identifier, RtcSessionDescription offer) {
+    send(encodeSessionDescription(identifier, 'media.publisher.webrtc.offer', offer));
   }
 
-  void sendSubscriberIceCandidate(RtcIceCandidate iceCandidate) {
-    send(_encodedIceCandidate('media.subscriber.webrtc.ice-candidate', iceCandidate));
+  void sendSubscriberIceCandidate(String identifier, RtcIceCandidate iceCandidate) {
+    send(_encodedIceCandidate(identifier, 'media.subscriber.webrtc.ice-candidate', iceCandidate));
   }
 
-  _encodedIceCandidate(String type, RtcIceCandidate iceCandidate) {
-    var message = {'type': type, 'data': {
+  _encodedIceCandidate(String identifier, String type, RtcIceCandidate iceCandidate) {
+    var message = {'identifier': identifier, 'type': type, 'data': {
         'candidate': iceCandidate.candidate,
         'sdpMid': iceCandidate.sdpMid,
         'sdpMLineIndex': iceCandidate.sdpMLineIndex
@@ -46,13 +46,12 @@ abstract class SignalHandler {
   }
 
 
-
-  void subscriberAnswer(RtcSessionDescription offer) {
-    send(encodeSessionDescription('media.subscriber.webrtc.answer', offer));
+  void subscriberAnswer(String identifier, RtcSessionDescription offer) {
+    send(encodeSessionDescription(identifier, 'media.subscriber.webrtc.answer', offer));
   }
 
-  encodedIceCandidate(RtcIceCandidate iceCandidate) {
-    var message = {'type': 'media.publisher.webrtc.ice-candidate', 'data': {
+  encodedIceCandidate(String identifier, RtcIceCandidate iceCandidate) {
+    var message = {'identifier': identifier, 'type': 'media.publisher.webrtc.ice-candidate', 'data': {
         'candidate': iceCandidate.candidate,
         'sdpMid': iceCandidate.sdpMid,
         'sdpMLineIndex': iceCandidate.sdpMLineIndex
@@ -61,8 +60,8 @@ abstract class SignalHandler {
     return JSON.encode(message);
   }
 
-  encodeSessionDescription(String type, RtcSessionDescription s) {
-    var message = {'type': type, 'data': {'sdp': s.sdp, 'type': s.type}};
+  encodeSessionDescription(String identifier, String type, RtcSessionDescription s) {
+    var message = {'identifier': identifier, 'type': type, 'data': {'sdp': s.sdp, 'type': s.type}};
     return JSON.encode(message);
   }
 }

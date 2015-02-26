@@ -13,6 +13,8 @@ class Publisher {
 
   String _identifier;
 
+  get identifier => _identifier;
+
   Publisher(this._identifier, this._signalHandler, [this.webRtcConfig]) {
     log.finest("Initializing Publisher($_identifier).");
 
@@ -28,6 +30,7 @@ class Publisher {
   void _listenToMessages() {
     _signalHandler.onMessage.listen((Message message) {
 //      log.finest("Message ${message.type} received. [${message.data}]}");
+    if (message.identifier == _identifier) {
       switch (message.type) {
         case 'offer':
           RtcSessionDescription offer = new RtcSessionDescription(message.data);
@@ -44,30 +47,40 @@ class Publisher {
           _peerConnection.setRemoteDescription(answer);
           break;
         default:
-      }});
-    log.finest("Now listening for messages.");
+      }}
+    });
+
+    log.finest("Publisher($identifier) now listening for messages.");
   }
 
   publishStreams() {
+    // TODO: Support multiple streams
     _peerConnection.addStream(_mediaStreams[0]);
     _createOffer(_peerConnection).then((RtcSessionDescription offer) {
-      _signalHandler.offer(offer);
+      _signalHandler.offer(_identifier, offer);
     });
   }
 
-  void createMediaStream() {
+  Future createMediaStream() {
+    var completer = new Completer();
     window.navigator.getUserMedia(audio: this.webRtcConfig.mediaConfig['audio'],
     video: webRtcConfig.mediaConfig['video']).then((stream) {
       log.info("Adding MediaStream: [${stream.label}}");
       _mediaStreams.add(stream);
-    }).catchError((issue) => log.severe(issue));
+      completer.complete(true);
+    }).catchError((issue) {
+      log.severe(issue);
+      completer.completeError(issue);
+    });
+
+    return completer.future;
   }
 
   _createPeerConnection() {
     var pc = new RtcPeerConnection(webRtcConfig.iceServers, webRtcConfig.dataConfig);
     pc.onIceCandidate.listen((e) {
       if (e.candidate != null) {
-        _signalHandler.sendIceCandidate(e.candidate);
+        _signalHandler.sendIceCandidate(_identifier, e.candidate);
       }
     });
 

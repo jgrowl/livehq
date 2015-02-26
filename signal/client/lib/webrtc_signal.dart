@@ -11,6 +11,7 @@ part 'web_socket_signal_handler.dart';
 part 'publisher.dart';
 part 'subscriber.dart';
 part 'publisher_subscriber_factory.dart';
+part 'identifier_resolver.dart';
 
 
 class Signal {
@@ -20,26 +21,19 @@ class Signal {
   static const subscriberCandidate = 'web.subscriber.webrtc.ice-candidate';
   static const subscriberAnswer = 'web.subscriber.webrtc.answer';
 
-  static String encoded(String type, Map data) {
-    var msg = {'type': type, 'data': data};
+  static String encoded(String identifier, String type, [Map data = const {}]) {
+    var msg = {'identifier': identifier, 'type': type, 'data': data};
     return JSON.encode(msg);
   }
 }
 
 class Message {
-
-//  static const subscriberOffer = 'subscriber-offer';
-//  static const subscriberCandidate = 'subscriber-candidate';
-//  static const subscriberAnswer = 'subscriber-answer';
-
-
+  String identifier;
   String type;
   Map data;
 
-  Message(this.type, this.data);
+  Message(this.identifier, this.type, this.data);
 }
-
-
 
 class WebRtcConfig {
   var iceServers = {
