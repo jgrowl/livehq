@@ -1,6 +1,11 @@
 part of webrtc.signal;
 
 class Subscriber {
+  static const offer = 'web.subscriber.webrtc.offer';
+  static const candidate = 'web.subscriber.webrtc.ice-candidate';
+  static const answer = 'web.subscriber.webrtc.answer';
+  static const subscribeSignal = 'media.subscriber.webrtc.subscribe';
+
   final Logger log = new Logger('Subscriber');
 
   SignalHandler _signalHandler;
@@ -33,13 +38,13 @@ class Subscriber {
 
 //      log.finest("Subscriber Message ${message.type} received. [${message.data}]}");
       switch (message.type) {
-        case Signal.subscriberOffer:
+        case offer:
           RtcSessionDescription offer = new RtcSessionDescription(message.data);
           _createAnswer(_peerConnection, offer).then((RtcSessionDescription answer) {
             _signalHandler.subscriberAnswer(identifier, answer);
           });
           break;
-        case Signal.subscriberCandidate:
+        case candidate:
           RtcIceCandidate iceCandidate = new RtcIceCandidate(message.data);
           _peerConnection.addIceCandidate(iceCandidate, () {
             log.fine("IceCandidate added successfully.");
@@ -47,7 +52,7 @@ class Subscriber {
             log.severe("Error adding IceCandidate! [$error]");
           });
           break;
-        case Signal.subscriberAnswer:
+        case answer:
           RtcSessionDescription answer = new RtcSessionDescription(message.data);
           _peerConnection.setRemoteDescription(answer);
           break;
@@ -111,6 +116,6 @@ class Subscriber {
   }
 
   void subscribe() {
-    _signalHandler.send(Signal.encoded(identifier, Signal.subscribe, {'publisherIdentifier': publisherIdentifier}));
+    _signalHandler.send(Signal.encoded(identifier, subscribeSignal, {'publisherIdentifier': publisherIdentifier}));
   }
 }

@@ -1,6 +1,10 @@
 part of webrtc.signal;
 
 class Publisher {
+  static const offer = 'web.publisher.webrtc.offer';
+  static const candidate = 'web.publisher.webrtc.ice-candidate';
+  static const answer = 'web.publisher.webrtc.answer';
+
   final Logger log = new Logger('Publisher');
 
   SignalHandler _signalHandler;
@@ -32,17 +36,17 @@ class Publisher {
 //      log.finest("Message ${message.type} received. [${message.data}]}");
     if (message.identifier == _identifier) {
       switch (message.type) {
-        case 'offer':
+        case offer:
           RtcSessionDescription offer = new RtcSessionDescription(message.data);
           _createAnswer(_peerConnection, offer);
           break;
-        case 'ice-candidate':
+        case candidate:
           RtcIceCandidate iceCandidate = new RtcIceCandidate(message.data);
           _peerConnection.addIceCandidate(iceCandidate, () {}, (String error) {
             log.severe("Problem adding IceCandidate: $error");
           });
           break;
-        case 'answer':
+        case answer:
           RtcSessionDescription answer = new RtcSessionDescription(message.data);
           _peerConnection.setRemoteDescription(answer);
           break;

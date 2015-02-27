@@ -16,7 +16,7 @@ class WebsocketClient
     info "Streaming changes to client(#{@id})"
     @socket = websocket
     @socket.on_message do |msg|
-      info "message: #{msg}"
+      debug "message: #{msg}"
       handle_message(msg)
     end
 

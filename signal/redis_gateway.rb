@@ -57,11 +57,11 @@ class RedisGateway
           data = JSON.parse(message)
           case type
             when 'web.publisher.webrtc.answer'
-              send_if_origin(origin, wrap_message(identifier, 'answer', data))
+              send_if_origin(origin, wrap_message(identifier, type, data))
             when 'web.publisher.webrtc.offer'
-              send_if_origin(origin, wrap_message(identifier, 'offer', data))
+              send_if_origin(origin, wrap_message(identifier, type, data))
             when 'web.publisher.webrtc.ice-candidate'
-              send_if_origin(origin, wrap_message(identifier, 'ice-candidate', data))
+              send_if_origin(origin, wrap_message(identifier, type, data))
 
             when 'web.subscriber.webrtc.answer'
               send_if_origin(origin, wrap_message(identifier, type, data))

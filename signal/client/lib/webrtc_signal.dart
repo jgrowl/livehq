@@ -15,11 +15,6 @@ part 'identifier_resolver.dart';
 
 
 class Signal {
-  static const subscribe = 'media.subscriber.webrtc.subscribe';
-
-  static const subscriberOffer = 'web.subscriber.webrtc.offer';
-  static const subscriberCandidate = 'web.subscriber.webrtc.ice-candidate';
-  static const subscriberAnswer = 'web.subscriber.webrtc.answer';
 
   static String encoded(String identifier, String type, [Map data = const {}]) {
     var msg = {'identifier': identifier, 'type': type, 'data': data};
