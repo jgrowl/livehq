@@ -7,7 +7,7 @@ import 'package:webrtc-signal/webrtc_signal.dart';
 
 void main() {
   Logger.root.onRecord.listen((LogRecord r) {
-    print("${r.time}\t${r.toString()}");
+    print("${r.time}\t${r}");
   });
   Logger.root.level = Level.FINEST;
   final Logger log = new Logger('Main');
