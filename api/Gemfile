@@ -22,14 +22,14 @@ gem 'devise'
 
 gem 'omniauth'
 # gem 'omniauth-oauthio', '~> 0.2.0'
-gem 'omniauth-oauthio', path: '/Users/jonathan/code/github.com/jgrowl/omniauth-oauthio'
+# gem 'omniauth-oauthio', path: '/Users/jonathan/code/github.com/jgrowl/omniauth-oauthio'
 
 gem 'jwt'
 
 # Authorization
 gem 'cancancan', '~> 1.9'
 
-gem 'media_api', path: '../media_api'
+# gem 'media_api', path: '../media_api'
 
 gem 'redis'
 

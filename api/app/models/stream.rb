@@ -2,7 +2,8 @@ require 'redis'
 
 class Stream
   def self.all
-    redis = Redis.new
+    # redis = Redis.new
+    redis = Redis.new(:host => "livehq-redis")
     pcs = redis.smembers 'pcs'
 
     {pcs: pcs.map { |pc| {

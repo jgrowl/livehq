@@ -78,7 +78,8 @@ Devise.setup do |config|
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
   # config.skip_session_storage = [:http_auth]
-  config.skip_session_storage = [:oauthio]
+  #TODO: COMMENT FOR NOW
+  # config.skip_session_storage = [:oauthio]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX
@@ -231,8 +232,9 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  config.omniauth :oauthio, Rails.application.secrets.oauthio_public_key, Rails.application.secrets.oauthio_private_key,
-                  :jwt_secret => Rails.application.secrets.oauthio_jwt_secret
+  #COMMENT OUT FOR NOW
+  # config.omniauth :oauthio, Rails.application.secrets.oauthio_public_key, Rails.application.secrets.oauthio_private_key,
+  #                 :jwt_secret => Rails.application.secrets.oauthio_jwt_secret
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
