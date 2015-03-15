@@ -1,0 +1,6 @@
+- name: Configure redis
+  hosts: all
+
+  roles:
+    - { role: zzet.rbenv }
+

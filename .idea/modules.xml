@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/angular_oauthio_wrapper/angular_oauthio_wrapper.iml" filepath="$PROJECT_DIR$/angular_oauthio_wrapper/angular_oauthio_wrapper.iml" />
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packer/base/base.iml" filepath="$PROJECT_DIR$/packer/base/base.iml" />
       <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/media.iml" filepath="$PROJECT_DIR$/media/.idea/modules/media.iml" />
       <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/media-build.iml" filepath="$PROJECT_DIR$/media/.idea/modules/media-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/media_api/media_api.iml" filepath="$PROJECT_DIR$/media_api/media_api.iml" />
       <module fileurl="file://$PROJECT_DIR$/packer/packer.iml" filepath="$PROJECT_DIR$/packer/packer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../satellizer.dart/satellizer.iml" filepath="$PROJECT_DIR$/../satellizer.dart/satellizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packer/redis/redis.iml" filepath="$PROJECT_DIR$/packer/redis/redis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packer/ruby/ruby.iml" filepath="$PROJECT_DIR$/packer/ruby/ruby.iml" />
       <module fileurl="file://$PROJECT_DIR$/signal/signal.iml" filepath="$PROJECT_DIR$/signal/signal.iml" />
       <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
     </modules>

@@ -1,0 +1,13 @@
+- name: Install livehq
+  hosts: all
+  sudo: yes
+
+  roles:
+  - { role: php-coder.oraclejdk }
+  - { role: JasonGiedymin.sbt }
+
+#  tasks:
+#  - name: Install dependencies
+#    apt: pkg={{ item }} state=installed
+#    with_items:
+#      - redis-server

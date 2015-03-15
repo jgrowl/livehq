@@ -3,3 +3,9 @@ dependencies:
 
   webrtc-signal:
     path: ../
+
+  http_server: any
+
+#transformers:
+#- $dart2js:
+#    minify: false

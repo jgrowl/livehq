@@ -9,7 +9,8 @@ class WebServer < Reel::Server::HTTP
   include Celluloid::Logger
   include Celluloid::Notifications
 
-  def initialize(host = "127.0.0.1", port = 1234)
+  def initialize(host = "0.0.0.0", port = 1234)
+    # def initialize(host = "127.0.0.1", port = 1234)
     info "LiveHQ WebSocket server starting on #{host}:#{port}"
     super(host, port, &method(:on_connection))
   end

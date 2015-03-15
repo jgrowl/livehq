@@ -14,7 +14,9 @@ void main() {
   Future<WebSocket> initWebSocket() {
     Completer completer = new Completer();
 
-    var uri = 'ws://127.0.0.1:1234/ws';
+    // TODO: This shouldn't actually be tied to the current host!
+    var uri = "ws://${window.location.hostname}:1234/ws";
+
     var webSocket = new WebSocket(uri);
     webSocket.onOpen.listen((e) {
     log.info("Websocket opened with $uri.");

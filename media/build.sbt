@@ -1,18 +1,13 @@
-import com.typesafe.sbt.SbtMultiJvm
-import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
-
-
 val akkaVersion = "2.3.9"
-
-//lazy val depProject = RootProject(uri("git://github.com/camfire/webrtc-jackson-serialization#master"))
 
 val project = Project(
   id = "media",
   base = file("."),
-  settings = Project.defaultSettings ++ SbtMultiJvm.multiJvmSettings ++ Seq(
+  settings = Project.defaultSettings ++ Seq(
+//    settings = Project.defaultSettings ++ SbtMultiJvm.multiJvmSettings ++ Seq(
     name := "media",
     version := "1.0",
-    scalaVersion := "2.11.4",
+    scalaVersion := "2.11.6",
     resolvers += "rediscala" at "http://dl.bintray.com/etaty/maven",
     libraryDependencies ++= Seq(
       "org.json4s" %% "json4s-jackson" % "3.2.10",

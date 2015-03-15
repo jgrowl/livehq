@@ -5,7 +5,8 @@ require 'rubygems'
 require 'redis'
 require 'json'
 
-$redis = Redis.new
+# $redis = Redis.new
+$redis = Redis.new(:host => "livehq-redis")
 
 channel = 'signal'   #ARGV[0]
 origin = '1'

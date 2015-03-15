@@ -1,0 +1,34 @@
+{
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "requirements.txt",
+      "destination": "/tmp/requirements.txt"
+    },
+    {
+      "type": "shell",
+      "inline": ["ansible-galaxy install -r /tmp/requirements.txt"]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "local.yml"
+    }
+  ],
+  "builders": [
+    {
+      "type": "docker",
+      "image": "livehq/base:0.1",
+      "pull": false,
+      "export_path": "image.tar"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-import",
+        "repository": "livehq/media",
+        "tag": "0.1"
+      }
+    ]
+  ]
+}

@@ -1,0 +1,19 @@
+- name: Configure ruby
+  hosts: all
+
+  vars:
+    ruby_env:
+      RBENV_ROOT: /usr/local/rbenv
+      PATH: /usr/local/rbenv/shims:/usr/local/rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+
+  roles:
+    - { role: zzet.rbenv }
+
+  tasks:
+    - gem: name=rails state=present
+      environment: ruby_env
+      sudo: yes
+
+    - command: rbenv rehash
+      environment: ruby_env

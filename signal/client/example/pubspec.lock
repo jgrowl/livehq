@@ -28,7 +28,7 @@ packages:
   code_transformers:
     description: code_transformers
     source: hosted
-    version: "0.2.5"
+    version: "0.2.7+1"
   collection:
     description: collection
     source: hosted
@@ -45,12 +45,20 @@ packages:
     description: html5lib
     source: hosted
     version: "0.12.0"
+  http_server:
+    description: http_server
+    source: hosted
+    version: "0.9.5+1"
   intl:
     description: intl
     source: hosted
     version: "0.11.12"
   logging:
     description: logging
+    source: hosted
+    version: "0.9.3"
+  mime:
+    description: mime
     source: hosted
     version: "0.9.3"
   observe:
@@ -68,7 +76,7 @@ packages:
   petitparser:
     description: petitparser
     source: hosted
-    version: "1.3.2"
+    version: "1.3.7"
   pool:
     description: pool
     source: hosted
@@ -84,23 +92,23 @@ packages:
   source_maps:
     description: source_maps
     source: hosted
-    version: "0.9.4"
+    version: "0.10.0+1"
   source_span:
     description: source_span
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   stack_trace:
     description: stack_trace
     source: hosted
-    version: "1.1.1"
+    version: "1.2.4"
   utf:
     description: utf
     source: hosted
-    version: "0.9.0+1"
+    version: "0.9.0+2"
   watcher:
     description: watcher
     source: hosted
-    version: "0.9.4"
+    version: "0.9.5"
   webrtc-signal:
     description:
       path: ".."

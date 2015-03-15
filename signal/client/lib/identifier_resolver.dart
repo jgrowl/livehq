@@ -7,7 +7,11 @@ abstract class IdentifierResolver {
 class RestfulIdentifierResolver extends IdentifierResolver {
   Future<String> create() {
     var completer = new Completer<String>();
-    var url = "http://localhost:3000/api/v1/identifiers.json";
+
+    // TODO: Remove this hard-coding
+    var host = window.location.hostname;
+
+    var url = "http://$host:3000/api/v1/identifiers.json";
 //    var data = { 'firstName' : 'John', 'lastName' : 'Doe' };
     var data = { };
     HttpRequest.postFormData(url, data).then((HttpRequest request) {
