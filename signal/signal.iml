@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RUBY_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/client/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/client/example/bin/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/client/example/packages/webrtc-signal" />
+      <excludeFolder url="file://$MODULE_DIR$/client/example/packer/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/client/example/packer/scripts/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/client/example/web/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/client/example/web/stylesheets/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/client/packages/webrtc-signal" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

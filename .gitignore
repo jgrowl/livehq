@@ -1,11 +1,17 @@
-*.iml
+# Intellij
+.idea/workspace.xml
+.idea/tasks.xml
+
 log
 out
+
+# Mac files
 .DS_Store
+
 dump.rdb
 journal
 snapshots
 target
 
 # Vagrant
-/.vagrant
+.vagrant

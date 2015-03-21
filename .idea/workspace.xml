@@ -1,42 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2b51acc2-6fb4-4ed5-863c-7493251e5d41" name="Default" comment="kk">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/media/lib/libjingle_peerconnection.jar" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/api/docker/id" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/api/docker/index_uuid" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/api/docker/synced_folders" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/media/docker/id" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/media/docker/index_uuid" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/media/docker/synced_folders" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/redis/docker/id" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/redis/docker/index_uuid" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/redis/docker/synced_folders" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/signal/docker/id" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/signal/docker/index_uuid" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/signal/docker/synced_folders" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/web/docker/id" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/web/docker/index_uuid" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.vagrant/machines/web/docker/synced_folders" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media/lib/libjingle_peerconnection-osx.jar" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/SBT__org_scala_lang_scala_library_2_11_5_jar.xml" afterPath="$PROJECT_DIR$/.idea/libraries/SBT__org_scala_lang_scala_library_2_11_6_jar.xml" />
+    <list default="true" id="2b51acc2-6fb4-4ed5-863c-7493251e5d41" name="Default" comment="Removes unnecessary backup project files.">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/api/api.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/packer/base/base.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/config/config.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/packer/packer.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/packer/redis/redis.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/packer/ruby/ruby.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/signal/signal.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/web.iml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/projectFilesBackup/.idea/libraries/SBT___scala_compiler_bundle_2_10_4.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/projectFilesBackup/.idea/libraries/SBT___scala_compiler_bundle_2_11_2.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/projectFilesBackup/.idea/libraries/SBT__org_scala_lang_scala_library_2_10_4.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/projectFilesBackup/.idea/libraries/SBT__org_scala_lang_scala_library_2_11_2.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/media/factory/CamfirePeerConnectionFactory.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/media/factory/CamfirePeerConnectionFactory.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/media/config/LogicModule.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/media/config/LogicModule.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/server/Publisher.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/server/Publisher.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/PublisherPcObs.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/PublisherPcObs.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/PublisherToRegistryPcObs.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/PublisherToRegistryPcObs.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/redis/RedisPublisherSignalMonitor.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/redis/RedisPublisherSignalMonitor.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/redis/RedisSubscriberSignalMonitor.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/tv/camfire/redis/RedisSubscriberSignalMonitor.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/RegistryToPublisherPcObs.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/RegistryToPublisherPcObs.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/server/Subscriber.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/server/Subscriber.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/SubscriberPcObs.scala" afterPath="$PROJECT_DIR$/media/src/main/scala/server/pc/obs/SubscriberPcObs.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Vagrantfile" afterPath="$PROJECT_DIR$/Vagrantfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/src/main/resources/development.conf" afterPath="$PROJECT_DIR$/media/src/main/resources/development.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packer/media/local.yml" afterPath="$PROJECT_DIR$/packer/media/local.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/packer/scripts/start.sh" afterPath="$PROJECT_DIR$/media/packer/scripts/start.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="c489aae0-9ae0-49b4-80e1-fc7ccf4f8f86" name="idea" comment="" />
     <ignored path="livehq.iws" />
@@ -138,8 +117,8 @@
       <file leaf-file-name="start.sh" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/media/packer/scripts/start.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.057416268" vertical-offset="0" max-vertical-offset="627">
-              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.086124405" vertical-offset="0" max-vertical-offset="627">
+              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -1255,13 +1234,7 @@
       <workItem from="1426281133997" duration="32645000" />
       <workItem from="1426360160371" duration="53982000" />
       <workItem from="1426809279436" duration="1379000" />
-      <workItem from="1426873506634" duration="20638000" />
-    </task>
-    <task id="LOCAL-00007" summary="Adds webrtc.offer, ice-candidate, subscribe  we support to redis gateway.&#10;Handles JSON parsing errors.&#10;">
-      <created>1416794672504</created>
-      <option name="number" value="00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1416794672504</updated>
+      <workItem from="1426873506634" duration="21933000" />
     </task>
     <task id="LOCAL-00008" summary="Sharded streams seem to work now (Identifier 1 is always used. Need to expand it to handle more than one).">
       <created>1416794907744</created>
@@ -1551,11 +1524,17 @@
       <option name="project" value="LOCAL" />
       <updated>1425597207158</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="Adds Docker, Vagrant, linux support! Updates hard-coded localhost references for Vagrant multi-machine configuration&#10;Updates webrtc java libs. Updates overridden method definitions.  Google appears to have fixed remote streams being relayed back so custom jni methods can be removed. See (https://code.google.com/p/webrtc/issues/detail?id=383)&#10; Updates media packer with additional required webrtc libraries. WebRTC was crashing on native initialization because it could not initialize the VoiceEngine.&#10; Removes vagrant dotfiles.&#10;&#10;">
+      <created>1426917536116</created>
+      <option name="number" value="00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1426917536117</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2192387000" />
+    <option name="totallyTimeSpent" value="2193682000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-5" width="1920" height="1085" extended-state="6" />
@@ -1645,7 +1624,6 @@
       <TodoPanelSettings />
     </option>
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="false" />
-    <MESSAGE value="Reverted a couple of changes." />
     <MESSAGE value="Fixes issue where Subscriber shard was never handling messages.&#10;Fixes Re-streaming to new subscriber." />
     <MESSAGE value="Removes packages directory" />
     <MESSAGE value="Adds packages to gitignore." />
@@ -1670,7 +1648,8 @@
     <MESSAGE value="Cleans up logging format." />
     <MESSAGE value="Creates publisher/subscriber signal constants." />
     <MESSAGE value="Removes .idea project folder from .gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removes .idea project folder from .gitignore" />
+    <MESSAGE value="Adds Docker, Vagrant, linux support! Updates hard-coded localhost references for Vagrant multi-machine configuration&#10;Updates webrtc java libs. Updates overridden method definitions.  Google appears to have fixed remote streams being relayed back so custom jni methods can be removed. See (https://code.google.com/p/webrtc/issues/detail?id=383)&#10; Updates media packer with additional required webrtc libraries. WebRTC was crashing on native initialization because it could not initialize the VoiceEngine.&#10; Removes vagrant dotfiles.&#10;&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adds Docker, Vagrant, linux support! Updates hard-coded localhost references for Vagrant multi-machine configuration&#10;Updates webrtc java libs. Updates overridden method definitions.  Google appears to have fixed remote streams being relayed back so custom jni methods can be removed. See (https://code.google.com/p/webrtc/issues/detail?id=383)&#10; Updates media packer with additional required webrtc libraries. WebRTC was crashing on native initialization because it could not initialize the VoiceEngine.&#10; Removes vagrant dotfiles.&#10;&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2082,8 +2061,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/media/packer/scripts/start.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.057416268" vertical-offset="0" max-vertical-offset="627">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.086124405" vertical-offset="0" max-vertical-offset="627">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding />
         </state>
       </provider>
