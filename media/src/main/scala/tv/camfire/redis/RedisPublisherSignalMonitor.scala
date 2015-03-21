@@ -15,7 +15,7 @@ import tv.camfire.webrtc.serialization.jackson.WebrtcSerializationSupport
  * Created by jonathan on 10/4/14.
  */
 class RedisPublisherSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
-  extends RedisSubscriberActor(new InetSocketAddress("localhost", 6379), channels, patterns) with jackson.JsonMethods
+  extends RedisSubscriberActor(new InetSocketAddress("livehq-redis", 6379), channels, patterns) with jackson.JsonMethods
   with WebrtcSerializationSupport with ActorLogging {
 
   val publisherRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)

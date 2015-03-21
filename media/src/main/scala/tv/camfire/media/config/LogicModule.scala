@@ -37,7 +37,7 @@ trait LogicModule extends Macwire {
    */
   //  lazy val callback: Callback = TypedActor(actorSystem).typedActorOf(TypedProps[DbCallback])
 //  lazy val callback: Callback = wire[RestCallback]
-  lazy val redis = RedisClient()
+  lazy val redis = RedisClient("livehq-redis")
   lazy val callback: Callback = wire[RedisCallback]
   lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 

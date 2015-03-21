@@ -92,7 +92,7 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
 
     case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
       log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
-      _incomingPeerConnection.peerConnection.addStream(mediaStream, webRtcHelper.createConstraints)
+      _incomingPeerConnection.peerConnection.addStream(mediaStream)
 
       // Update offer
       val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)

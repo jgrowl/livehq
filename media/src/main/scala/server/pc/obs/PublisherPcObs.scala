@@ -3,7 +3,7 @@ package server.pc.obs
 import akka.actor.ActorRef
 import akka.event.LoggingAdapter
 import livehq.Internal
-import org.webrtc.PeerConnection.{IceConnectionState, IceGatheringState, SignalingState}
+import org.webrtc.PeerConnection._
 import org.webrtc.{DataChannel, IceCandidate, MediaStream, PeerConnection}
 import server.Utils
 import tv.camfire.media.callback.Callback
@@ -15,9 +15,15 @@ class PublisherPcObs(log: LoggingAdapter,
                      pcId: String,
                      self: ActorRef,
                      callback: Callback,
-                     identifier: String) extends PeerConnection.Observer {
-  override def onError(): Unit = {
-    log.error(s"$pcId.onError.")
+                     identifier: String) extends Observer {
+
+
+//  override def onError(): Unit = {
+//    log.error(s"$pcId.onError.")
+//  }
+
+  override def onRenegotiationNeeded() {
+
   }
 
   override def onIceCandidate(iceCandidate: IceCandidate): Unit = {

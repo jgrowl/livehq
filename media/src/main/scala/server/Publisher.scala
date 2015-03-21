@@ -91,7 +91,7 @@ object Publisher {
   _init()
 
   private def _init(): Unit = {
-    log.info(s"$pcId Initialized.")
+    log.info(s"$pcId Initializing...")
     _incomingPeerConnection = new StandardPcDetails(webRtcHelper.createPeerConnection(
       new PublisherPcObs(
         log: LoggingAdapter,
@@ -254,7 +254,7 @@ object Publisher {
     mediaStreams.foreach {
       case (mediaStreamId, mediaStream) => {
         log.info(s"$logId Adding MediaStream(${mediaStream.label()})")
-        if (pc.addStream(mediaStream, webRtcHelper.createConstraints)) {
+        if (pc.addStream(mediaStream)) {
           log.info(s"$logId Successfully Added MediaStream(${mediaStream.label()})")
         } else {
           log.error(s"$logId Failed to add MediaStream(${mediaStream.label()})")

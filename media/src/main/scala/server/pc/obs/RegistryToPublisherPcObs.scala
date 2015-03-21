@@ -26,8 +26,12 @@ class RegistryToPublisherPcObs(
     callback.onRegistryPubSignalingChange(identifier, uuid, signalState)
   }
 
-  override def onError(): Unit = {
-    log.error(s"$logId.onError!")
+//  override def onError(): Unit = {
+//    log.error(s"$logId.onError!")
+//  }
+
+  override def onRenegotiationNeeded() {
+
   }
 
   override def onIceCandidate(candidate: IceCandidate): Unit = {

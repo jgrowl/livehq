@@ -19,6 +19,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  config.vm.define "media" do |media|
+    media.vm.provider "docker" do |docker|
+      docker.name  = "livehq-media"
+      docker.image = "livehq/media:0.1"
+      docker.link "livehq-redis:livehq-redis"
+      docker.env = {
+          'LD_LIBRARY_PATH' => '/vagrant/media/libs/native',
+      }
+
+      docker.create_args = %w(-w /vagrant/media)
+      docker.cmd = %w(./packer/scripts/start.sh)
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
   config.vm.define "signal" do |media|
     media.vm.provider "docker" do |docker|
       docker.name  = "livehq-signal"
@@ -49,17 +65,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.define "media" do |media|
-    media.vm.provider "docker" do |docker|
-      docker.name  = "livehq-media"
-      docker.image = "livehq/media:0.1"
-      docker.link "livehq-redis:livehq-redis"
-      docker.create_args = %w(-w /vagrant/media)
-      docker.cmd = %w(./packer/scripts/start.sh)
-      docker.vagrant_vagrantfile = __FILE__
-      docker.remains_running = false
-    end
-  end
 
   config.vm.define "web" do |media|
     media.vm.provider "docker" do |docker|

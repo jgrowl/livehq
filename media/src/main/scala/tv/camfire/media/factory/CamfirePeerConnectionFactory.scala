@@ -10,13 +10,14 @@ import org.webrtc.{MediaStream, PeerConnectionFactory}
 class CamfirePeerConnectionFactory extends PeerConnectionFactory {
 
   def createDuplicatedMediaStream(mediaStream: MediaStream, identifier: String) : MediaStream = {
-    val newMediaStream = createLocalMediaStream(identifier)
-    // TODO: Get all tracks instead of just the first one!
-    val sourceVideoTrack = mediaStream.videoTracks.get(0)
-    val newSource = createVideoSourceFromVideoTrack(sourceVideoTrack)
-    val videoTrack = createVideoTrack(sourceVideoTrack.id(), newSource)
-    newMediaStream.addTrack(videoTrack)
-    newMediaStream
+//    val newMediaStream = createLocalMediaStream(identifier)
+//    // TODO: Get all tracks instead of just the first one!
+//    val sourceVideoTrack = mediaStream.videoTracks.get(0)
+//    val newSource = createVideoSourceFromVideoTrack(sourceVideoTrack)
+//    val videoTrack = createVideoTrack(sourceVideoTrack.id(), newSource)
+//    newMediaStream.addTrack(videoTrack)
+//    newMediaStream
+    mediaStream
   }
 
 }

@@ -3,7 +3,7 @@ package server.pc.obs
 import akka.actor.{ActorRef, ActorSystem}
 import akka.event.LoggingAdapter
 import livehq.Internal
-import org.webrtc.PeerConnection.{IceConnectionState, IceGatheringState, SignalingState}
+import org.webrtc.PeerConnection.{Observer, IceConnectionState, IceGatheringState, SignalingState}
 import org.webrtc.{DataChannel, IceCandidate, MediaStream, PeerConnection}
 import server.Utils
 import tv.camfire.media.callback.Callback
@@ -18,7 +18,7 @@ class PublisherToRegistryPcObs(log: LoggingAdapter,
                                      self: ActorRef,
                                      callback: Callback,
                                      identifier: String,
-                                     uuid: String) extends PeerConnection.Observer {
+                                     uuid: String) extends Observer {
 
     val registry = system.actorSelection(path)
 
@@ -27,9 +27,13 @@ class PublisherToRegistryPcObs(log: LoggingAdapter,
       callback.onRegistryPubSignalingChange(identifier, uuid, signalState)
     }
 
-    override def onError(): Unit = {
-      log.error(s"$logId.onError!")
-    }
+//    override def onError(): Unit = {
+//      log.error(s"$logId.onError!")
+//    }
+
+override def onRenegotiationNeeded() {
+
+}
 
     override def onIceCandidate(candidate: IceCandidate): Unit = {
       log.info(s"$logId.onIceCandidate [${Utils.stripNewline(candidate.toString)}]")

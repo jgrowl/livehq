@@ -17,9 +17,15 @@ class SubscriberPcObs(
                        callback: SubscriberCallback,
                        identifier: String
                        ) extends PeerConnection.Observer {
-  override def onError(): Unit = {
-    log.error(s"$pcId.onError.")
+//  override def onError(): Unit = {
+//    log.error(s"$pcId.onError.")
+//  }
+
+
+  override def onRenegotiationNeeded() {
+
   }
+
 
   override def onIceCandidate(iceCandidate: IceCandidate): Unit = {
     log.info(s"$pcId.onIceCandidate. [${Utils.stripNewline(iceCandidate.toString)}]")

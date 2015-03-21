@@ -6,3 +6,6 @@ dump.rdb
 journal
 snapshots
 target
+
+# Vagrant
+/.vagrant

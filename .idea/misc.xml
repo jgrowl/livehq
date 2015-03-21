@@ -3,9 +3,12 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="JRailsFacetType" url="file://$PROJECT_DIR$/api/config/routes.rb" />
+    <type id="JRUBY" />
+  </component>
   <component name="IdProvider" IDEtalkID="675A28B68BC107B9DE101219ABC0994B" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
-
