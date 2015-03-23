@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/media.iml" filepath="$PROJECT_DIR$/media/.idea/modules/media.iml" />
       <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/media-build.iml" filepath="$PROJECT_DIR$/media/.idea/modules/media-build.iml" />
       <module fileurl="file://$PROJECT_DIR$/packer/packer.iml" filepath="$PROJECT_DIR$/packer/packer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/media/project/.idea/modules/project.iml" filepath="$PROJECT_DIR$/media/project/.idea/modules/project.iml" />
       <module fileurl="file://$PROJECT_DIR$/packer/redis/redis.iml" filepath="$PROJECT_DIR$/packer/redis/redis.iml" />
       <module fileurl="file://$PROJECT_DIR$/packer/ruby/ruby.iml" filepath="$PROJECT_DIR$/packer/ruby/ruby.iml" />
       <module fileurl="file://$PROJECT_DIR$/signal/signal.iml" filepath="$PROJECT_DIR$/signal/signal.iml" />

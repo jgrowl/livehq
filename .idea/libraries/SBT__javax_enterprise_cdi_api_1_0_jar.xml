@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SBT: javax.enterprise:cdi-api:1.0:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/javax.enterprise/cdi-api/jars/cdi-api-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
