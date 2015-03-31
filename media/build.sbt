@@ -12,10 +12,10 @@ val akkaVersion = "2.3.9"
 //enablePlugins(AkkaAppPackaging)
 
 
-val folderName =
-  if (System.getProperty("os.name").startsWith("Windows")) "windows" else "linux"
-val libPath = Seq("some/common/path", s"lib/native/$folderName").mkString(java.io.File.pathSeparator)
-javaOptions in run += s"-Djava.library.path=$libPath"
+//val folderName =
+//  if (System.getProperty("os.name").startsWith("Windows")) "windows" else "linux"
+//val libPath = Seq("some/common/path", s"lib/native/$folderName").mkString(java.io.File.pathSeparator)
+//javaOptions in run += s"-Djava.library.path=$libPath"
 
 val project = Project(
   id = "media",

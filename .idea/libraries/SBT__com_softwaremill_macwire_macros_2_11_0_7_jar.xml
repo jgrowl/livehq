@@ -2,7 +2,6 @@
   <library name="SBT: com.softwaremill.macwire:macros_2.11:0.7:jar">
     <CLASSES>
       <root url="jar://$USER_HOME$/.ivy2/cache/com.softwaremill.macwire/macros_2.11/jars/macros_2.11-0.7.jar!/" />
-      <root url="jar://$USER_HOME$/.ivy2/cache/com.softwaremill.macwire/macros_2.11/jars/macros_2.11-0.7.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

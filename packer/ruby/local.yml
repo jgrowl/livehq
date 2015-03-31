@@ -2,18 +2,40 @@
   hosts: all
 
   vars:
-    ruby_env:
-      RBENV_ROOT: /usr/local/rbenv
-      PATH: /usr/local/rbenv/shims:/usr/local/rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+#    rbenv:
+#      env: user
+#    rbenv_users: ['app']
+
+#    ruby_env:
+#      RBENV_ROOT: /usr/local/rbenv
+#      PATH: /usr/local/rbenv/shims:/usr/local/rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#    ruby_env:
+#      RBENV_ROOT: ~/.rbenv
+#      PATH: ~/.rbenv/shims:/usr/local/rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 
   roles:
-    - { role: zzet.rbenv }
+    - role: zzet.rbenv
+      rbenv:
+        env: user
+        version: v0.4.0
+        ruby_version: 2.2.0
+      rbenv_users:
+        - app
 
-  tasks:
-    - gem: name=rails state=present
-      environment: ruby_env
-      sudo: yes
 
-    - command: rbenv rehash
-      environment: ruby_env
+#  tasks:
+#    - gem: name=bundler state=present
+##      environment: ruby_env
+##      sudo: yes
+#      sudo_user: app
+#
+#    - gem: name=rails state=present
+##      environment: ruby_env
+##      sudo: yes
+#      sudo_user: app
+#
+#    - command: rbenv rehash
+##      environment: ruby_env
+#      sudo_user: app

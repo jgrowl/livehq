@@ -9,8 +9,6 @@ import tv.camfire.redis.{RedisPublisherSignalMonitor, RedisSubscriberSignalMonit
 case class Config(mode: String = "", port: Int = -1, startStore: Boolean = false, kwargs: Map[String, String] = Map())
 
 object App {
-  def isAllDigits(x: String) = x forall Character.isDigit
-
   def main(args: Array[String]): Unit = {
     val parser = new scopt.OptionParser[Config]("livehq-media") {
       head("livehq-media", "0.x")
@@ -59,21 +57,23 @@ object App {
         }
         )
     }
-    // parser.parse returns Option[C]
     parser.parse(args, Config()) match {
       case Some(config) =>
-        val p = config.port
-        val modules: LogicModule = new LogicModule {
-          def port(): String = {
-            p.toString
-          }
-        } // do stuff
-      val system = modules.actorSystem
-
-        startupSharedJournal(system, startStore = config.startStore, path =
-          ActorPath.fromString(s"akka.tcp://ClusterSystem@127.0.0.1:$sharedJournalPort/user/store"))
 
         if (config.mode == "publisher") {
+
+          val p = config.port
+          val modules: LogicModule = new LogicModule {
+            def port(): String = {
+              p.toString
+            }
+          } // do stuff
+          val system = modules.actorSystem
+
+          startupSharedJournal(system, startStore = config.startStore, path =
+            ActorPath.fromString(s"akka.tcp://ClusterSystem@livehq-redis:$sharedJournalPort/user/store"))
+//            ActorPath.fromString(s"akka.tcp://ClusterSystem@127.0.0.1:$sharedJournalPort/user/store"))
+
           ClusterSharding(system).start(
             typeName = Publisher.shardName,
             entryProps = Some(Publisher.props(modules.webRtcHelper, modules.callback)),
@@ -87,6 +87,18 @@ object App {
             idExtractor = Subscriber.idExtractor,
             shardResolver = Subscriber.shardResolver)
         } else if (config.mode == "publisher-monitor") {
+
+          val p = config.port
+          val modules: LogicModule = new LogicModule {
+            def port(): String = {
+              p.toString
+            }
+          } // do stuff
+          val system = modules.actorSystem
+
+          startupSharedJournal(system, startStore = config.startStore, path =
+            ActorPath.fromString(s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"))
+//            ActorPath.fromString(s"akka.tcp://ClusterSystem@127.0.0.1:$sharedJournalPort/user/store"))
           ClusterSharding(system).start(
             typeName = Publisher.shardName,
             entryProps = None, // Starting in Proxy mode
@@ -98,6 +110,18 @@ object App {
           system.actorOf(Props(classOf[RedisPublisherSignalMonitor], channels, patterns)
             .withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
         } else if (config.mode == "subscriber") {
+
+          val p = config.port
+          val modules: LogicModule = new LogicModule {
+            def port(): String = {
+              p.toString
+            }
+          } // do stuff
+          val system = modules.actorSystem
+
+          startupSharedJournal(system, startStore = config.startStore, path =
+            ActorPath.fromString(s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"))
+//          ActorPath.fromString(s"akka.tcp://ClusterSystem@127.0.0.1:$sharedJournalPort/user/store"))
           val publisherRegion = ClusterSharding(system).start(
             typeName = Publisher.shardName,
             entryProps = None,
@@ -111,6 +135,19 @@ object App {
             shardResolver = Subscriber.shardResolver)
 
         } else if (config.mode == "subscriber-monitor") {
+
+          val p = config.port
+          val modules: LogicModule = new LogicModule {
+            def port(): String = {
+              p.toString
+            }
+          } // do stuff
+          val system = modules.actorSystem
+
+          startupSharedJournal(system, startStore = config.startStore, path =
+            ActorPath.fromString(s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"))
+//          ActorPath.fromString(s"akka.tcp://ClusterSystem@127.0.0.1:$sharedJournalPort/user/store"))
+
           val subscriberRegion = ClusterSharding(system).start(
             typeName = Subscriber.shardName,
             entryProps = None, // Starting in Proxy mode
