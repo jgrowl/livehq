@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SBT: org.sonatype.plexus:plexus-cipher:1.7:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.sonatype.plexus/plexus-cipher/jars/plexus-cipher-1.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

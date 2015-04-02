@@ -18,3 +18,4 @@
       - libasound2-data
       - module-init-tools
       - libsndfile1-dev
+      - pulseaudio

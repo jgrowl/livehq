@@ -242,7 +242,6 @@ object Publisher {
     log.info(s"$logId Creating registry PeerConnection at [$path]")
     callback.onRegistryPubInitialize(identifier, uuid, path)
 
-    //      val registry = context.system.actorSelection(path)
     val registryObserver = new PublisherToRegistryPcObs(log, logId, context.system, path, self, callback,
       identifier, uuid)
 

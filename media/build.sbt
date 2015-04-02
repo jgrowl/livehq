@@ -1,4 +1,21 @@
+//import com.typesafe.sbt.SbtStartScript
+//enablePlugins(SbtNativePackager)
+//import com.typesafe.sbt.SbtNativePackager._
+//import NativePackagerKeys._
+
+//import NativePackagerKeys._
+
+
 val akkaVersion = "2.3.9"
+
+//enablePlugins(JavaAppPackaging)
+//enablePlugins(AkkaAppPackaging)
+
+
+//val folderName =
+//  if (System.getProperty("os.name").startsWith("Windows")) "windows" else "linux"
+//val libPath = Seq("some/common/path", s"lib/native/$folderName").mkString(java.io.File.pathSeparator)
+//javaOptions in run += s"-Djava.library.path=$libPath"
 
 val project = Project(
   id = "media",
@@ -9,6 +26,7 @@ val project = Project(
     version := "1.0",
     scalaVersion := "2.11.6",
     resolvers += "rediscala" at "http://dl.bintray.com/etaty/maven",
+    resolvers += Resolver.sonatypeRepo("public"),
     libraryDependencies ++= Seq(
       "org.json4s" %% "json4s-jackson" % "3.2.10",
       "com.github.romix.akka" %% "akka-kryo-serialization" % "0.3.2",
@@ -19,8 +37,14 @@ val project = Project(
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
       "com.typesafe.akka" %% "akka-contrib" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
+      "com.github.scopt" %% "scopt" % "3.3.0",
       "org.scalatest" %% "scalatest" % "2.1.6" % "test",
-      "commons-io" % "commons-io" % "2.4" % "test")//,
+      "commons-io" % "commons-io" % "2.4" % "test"),
+    scalacOptions in (Compile,doc) ++= Seq("-Ymacro-expand:none")
+
+
+
+    //,
 //    // make sure that MultiJvm test are compiled by the default test compilation
 //    compile in MultiJvm <<= (compile in MultiJvm) triggeredBy (compile in Test),
 //    // disable parallel tests
@@ -40,3 +64,4 @@ val project = Project(
 //    }
   )
 ) //configs (MultiJvm)
+//.settings(SbtStartScript.startScriptForClassesSettings: _*)

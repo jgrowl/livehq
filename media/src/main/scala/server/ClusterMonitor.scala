@@ -19,15 +19,15 @@ class ClusterMonitor extends Actor with ActorLogging {
 }
 
 object ClusterMonitor {
-
-  def main(args: Array[String]) {
-    if (args.isEmpty) {
-      startup(Seq("2551"))
-    } else {
-      startup(args)
-    }
-
-  }
+//
+//  def main(args: Array[String]) {
+//    if (args.isEmpty) {
+//      startup(Seq("2551"))
+//    } else {
+//      startup(args)
+//    }
+//
+//  }
 
   def startup(ports: Seq[String]): Unit = {
 //    ports foreach { _port =>
