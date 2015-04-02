@@ -50,8 +50,7 @@ class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier:
       _pcDetails.peerConnection.addIceCandidate(candidate)
     case Internal.Registry.AddStream(identifier, mediaStream) =>
       log.info(s"Adding stream ${mediaStream.label()}.")
-      val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, identifier)
-      _pcDetails.addStream(duplicatedMediaStream)
+      _pcDetails.addStream(mediaStream)
     // TODO: Add the ability to subscribe to a single label
     case Internal.Registry.Connected(identifier) =>
       _connected = true

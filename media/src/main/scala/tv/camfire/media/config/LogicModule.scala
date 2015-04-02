@@ -3,10 +3,9 @@ package tv.camfire.media.config
 import akka.actor.ActorSystem
 import com.softwaremill.macwire.Macwire
 import com.typesafe.config.ConfigFactory
-import org.webrtc.PeerConnection
+import org.webrtc.{PeerConnectionFactory, PeerConnection}
 import redis.RedisClient
 import tv.camfire.media.callback.{RedisSubscriberCallback, SubscriberCallback, Callback, RedisCallback}
-import tv.camfire.media.factory.CamfirePeerConnectionFactory
 import tv.camfire.media.webrtc.WebRtcHelper
 
 /**
@@ -28,10 +27,6 @@ trait LogicModule extends Macwire {
 
   lazy implicit val actorSystem = ActorSystem("ClusterSystem", config)
 
-//  val channels = Seq("time")
-//  val patterns = Seq("pattern.*")
-//  akkaSystem.actorOf(Props(classOf[SubscribeActor], channels, patterns).withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
-
   /**
    * Server
    */
@@ -49,7 +44,7 @@ trait LogicModule extends Macwire {
   lazy val iceServers = new java.util.ArrayList[PeerConnection.IceServer]()
   iceServers.add(new PeerConnection.IceServer(properties.iceUri, properties.iceUsername, properties.icePassword))
 
-  lazy val camfirePeerConnectionFactory = wire[CamfirePeerConnectionFactory]
+  lazy val peerConnectionFactory = wire[PeerConnectionFactory]
   lazy val webRtcHelper: WebRtcHelper = wire[WebRtcHelper]
 
 }

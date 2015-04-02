@@ -57,8 +57,7 @@ package object livehq {
       val label = mediaStream.label()
       mMediaStreams.put(label, mediaStream)
       val duplicatedLabel = s"$label-dup"
-      val duplicatedMediaStream = webRtcHelper.createDuplicateMediaStream(mediaStream, duplicatedLabel)
-      mDuplicatedMediaStreams.put(duplicatedLabel, duplicatedMediaStream)
+      mDuplicatedMediaStreams.put(duplicatedLabel, mediaStream)
     }
 
     def getMediaStreams: mutable.Map[String, MediaStream] = {

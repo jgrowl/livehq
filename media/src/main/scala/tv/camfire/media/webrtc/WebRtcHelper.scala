@@ -5,21 +5,16 @@ import java.util
 import org.slf4j.{Logger, LoggerFactory}
 import org.webrtc.MediaConstraints.KeyValuePair
 import org.webrtc._
-import tv.camfire.media.factory.CamfirePeerConnectionFactory
 
 /**
  * User: jonathan
  * Date: 4/24/13
  * Time: 1:45 PM
  */
-class WebRtcHelper(val factory: CamfirePeerConnectionFactory,
+class WebRtcHelper(val factory: PeerConnectionFactory,
                    iceServers: util.ArrayList[PeerConnection.IceServer]) {
 
   val log: Logger = LoggerFactory.getLogger(classOf[WebRtcHelper])
-
-  def createDuplicateMediaStream(mediaStream: MediaStream, identifier: String): MediaStream = {
-    factory.createDuplicatedMediaStream(mediaStream, identifier)
-  }
 
     def createPeerConnection(observer: PeerConnection.Observer): PeerConnection = {
       factory.createPeerConnection(iceServers, createConstraints, observer)
