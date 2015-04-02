@@ -8,8 +8,6 @@ import tv.camfire.redis.RedisSubscriberSignalMonitor
 
 object SubscriberMonitorApp {
 
-  def sharedJournalPort = "2551"
-
   def run(p: Int, startStore: Boolean): Unit = {
     val modules: LogicModule = new LogicModule {
       def port(): String = {
@@ -22,7 +20,7 @@ object SubscriberMonitorApp {
     SharedJournalStarter.startupSharedJournal(system, startStore = startStore, path =
       ActorPath.fromString(properties.sharedJournalPath))
 
-    val subscriberRegion = ClusterSharding(system).start(
+    ClusterSharding(system).start(
       typeName = Subscriber.shardName,
       entryProps = None, // Starting in Proxy mode
       idExtractor = Subscriber.idExtractor,

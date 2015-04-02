@@ -8,8 +8,6 @@ import tv.camfire.media.config.LogicModule
 
 object SubscriberApp {
 
-  def sharedJournalPort = "2551"
-
   def run(p: Int, startStore: Boolean): Unit = {
     val modules: LogicModule = new LogicModule {
       def port(): String = {
@@ -22,13 +20,13 @@ object SubscriberApp {
     SharedJournalStarter.startupSharedJournal(system, startStore = startStore, path =
       ActorPath.fromString(properties.sharedJournalPath))
 
-    val publisherRegion = ClusterSharding(system).start(
+    ClusterSharding(system).start(
       typeName = Publisher.shardName,
       entryProps = None,
       idExtractor = Publisher.idExtractor,
       shardResolver = Publisher.shardResolver)
 
-    val subscriberRegion = ClusterSharding(system).start(
+    ClusterSharding(system).start(
       typeName = Subscriber.shardName,
       entryProps = Some(Subscriber.props(modules.webRtcHelper, modules.subscriberCallback)),
       idExtractor = Subscriber.idExtractor,

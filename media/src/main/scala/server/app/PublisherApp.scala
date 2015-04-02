@@ -7,8 +7,6 @@ import tv.camfire.media.config.LogicModule
 
 object PublisherApp {
 
-  def sharedJournalPort = "2551"
-
   def run(p: Int, startStore: Boolean): Unit = {
     val modules: LogicModule = new LogicModule {
       def port(): String = {
