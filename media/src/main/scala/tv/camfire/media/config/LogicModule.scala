@@ -34,10 +34,6 @@ trait LogicModule extends Macwire {
   lazy val callback: Callback = wire[RedisCallback]
   lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 
-//  val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
-//    withFallback(ConfigFactory.load())
-//
-
   /**
    * WebRTC
    */
