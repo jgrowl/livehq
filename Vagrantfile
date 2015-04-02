@@ -135,7 +135,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     media.vm.provider "docker" do |docker|
       docker.name  = "livehq-signal"
       docker.image = "ruby:2.2-onbuild"
-      # docker.build_dir = "./signal"
       docker.link "livehq-redis:livehq-redis"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.create_args = %w(-w /vagrant/signal --dns-search service.consul)
