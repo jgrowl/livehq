@@ -134,14 +134,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "signal" do |media|
     media.vm.provider "docker" do |docker|
       docker.name  = "livehq-signal"
-      docker.build_dir = "./signal"
+      docker.image = "ruby:2.2-onbuild"
+      # docker.build_dir = "./signal"
+      docker.link "livehq-redis:livehq-redis"
       docker.link "livehq-consul-server:livehq-consul-server"
+      docker.create_args = %w(-w /vagrant/signal --dns-search service.consul)
       docker.ports = ["1234:1234"]
       docker.env = {
           'SERVICE_NAME' => 'livehq-signal',
           'APP_UID' => Process.uid,
           'APP_GUID' => Process.gid
       }
+      docker.cmd = %w(./scripts/start.sh)
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
@@ -152,7 +156,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       docker.name  = "livehq-api"
       docker.image = "livehq/api:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = %w(-w /vagrant/api)
+      docker.create_args = %w(-w /vagrant/api --dns-search service.consul)
       docker.ports = ["3000:3000"]
       docker.env = {
           'SERVICE_NAME' => 'livehq-api',
