@@ -6,4 +6,4 @@ groupmod -g $APP_GUID app
 sudo -u app sbt -Djava.library.path=$LD_LIBRARY_PATH \
     -Dakka.remote.netty.tcp.hostname=livehq-subscriber-seed \
     -Dakka.remote.netty.tcp.port=2553 \
-    'run-main server.App subscriber -p 2553'
+    'run-main server.app.App subscriber -p 2553'

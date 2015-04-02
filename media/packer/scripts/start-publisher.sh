@@ -7,7 +7,7 @@ groupmod -g $APP_GUID app
 sudo -u app sbt -Djava.library.path=$LD_LIBRARY_PATH \
     -Dakka.remote.netty.tcp.hostname=livehq-publisher-seed \
     -Dakka.remote.netty.tcp.port=2551 \
-    'run-main server.App publisher -p 2551 --startStore true'
+    'run-main server.app.App publisher -p 2551 --startStore true'
 
 
 #apt-get install -y dnsutils

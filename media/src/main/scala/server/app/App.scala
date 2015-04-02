@@ -1,4 +1,4 @@
-package server
+package server.app
 
 case class Config(mode: String = "", port: Int = -1, startStore: Boolean = false, kwargs: Map[String, String] = Map())
 

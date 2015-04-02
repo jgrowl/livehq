@@ -1,7 +1,8 @@
-package server
+package server.app
 
 import akka.actor._
 import akka.contrib.pattern.ClusterSharding
+import server.{Publisher, SharedJournalStarter, Subscriber}
 import tv.camfire.media.config.LogicModule
 
 object PublisherApp {
@@ -15,9 +16,10 @@ object PublisherApp {
       }
     }
     val system = modules.actorSystem
+    val properties = modules.properties
 
     SharedJournalStarter.startupSharedJournal(system, startStore = startStore, path =
-      ActorPath.fromString(s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"))
+      ActorPath.fromString(properties.sharedJournalPath))
 
     ClusterSharding(system).start(
       typeName = Publisher.shardName,

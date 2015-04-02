@@ -62,9 +62,8 @@ trait Properties {
 
   def iceUri = "%s:%s:%s".format(iceProtocol, iceHost, icePort)
 
-
-  //
   def actorSystemName = config getString "media.actor_system.name"
-  def restUrl = config getString "media.rest.url"
 
+  def sharedJournalPort = "2551"
+  def sharedJournalPath = s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"
 }

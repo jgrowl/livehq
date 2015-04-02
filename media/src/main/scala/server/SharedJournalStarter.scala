@@ -17,7 +17,7 @@ object SharedJournalStarter {
       system.actorOf(Props[SharedLeveldbStore], "store")
     // register the shared journal
     import system.dispatcher
-    implicit val timeout = Timeout(60.seconds)
+    implicit val timeout = Timeout(15.seconds)
     val f = (system.actorSelection(path) ? Identify(None))
     f.onSuccess {
       case ActorIdentity(_, Some(ref)) => SharedLeveldbJournal.setStore(ref, system)

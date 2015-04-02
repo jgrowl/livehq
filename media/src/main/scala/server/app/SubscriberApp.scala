@@ -1,11 +1,12 @@
-package server
+package server.app
 
 import akka.actor._
 import akka.contrib.pattern.ClusterSharding
+import server.registry.Registry
+import server.{Publisher, SharedJournalStarter, Subscriber}
 import tv.camfire.media.config.LogicModule
-import tv.camfire.redis.RedisPublisherSignalMonitor
 
-object PublisherMonitorApp {
+object SubscriberApp {
 
   def sharedJournalPort = "2551"
 
@@ -16,26 +17,24 @@ object PublisherMonitorApp {
       }
     }
     val system = modules.actorSystem
+    val properties = modules.properties
 
     SharedJournalStarter.startupSharedJournal(system, startStore = startStore, path =
-      ActorPath.fromString(s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"))
+      ActorPath.fromString(properties.sharedJournalPath))
 
-    ClusterSharding(system).start(
+    val publisherRegion = ClusterSharding(system).start(
       typeName = Publisher.shardName,
-      entryProps = None, // Starting in Proxy mode
+      entryProps = None,
       idExtractor = Publisher.idExtractor,
       shardResolver = Publisher.shardResolver)
 
     val subscriberRegion = ClusterSharding(system).start(
       typeName = Subscriber.shardName,
-      entryProps = None, // Starting in Proxy mode
+      entryProps = Some(Subscriber.props(modules.webRtcHelper, modules.subscriberCallback)),
       idExtractor = Subscriber.idExtractor,
       shardResolver = Subscriber.shardResolver)
 
-    val channels = Seq()
-    val patterns = Seq("media.publisher.*")
-    system.actorOf(Props(classOf[RedisPublisherSignalMonitor], channels, patterns)
-      .withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
+    system.actorOf(Props(new Registry(modules.webRtcHelper, modules.callback)), "registry")
   }
 }
 
