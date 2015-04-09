@@ -2,7 +2,6 @@ package tv.camfire.media.config
 
 import com.typesafe.config.ConfigFactory
 
-
 /**
  * User: jonathan
  * See: http://scalaruss.wordpress.com/2013/03/08/typesafe-config/
@@ -23,7 +22,6 @@ trait Properties {
     */
   val envConfig = ConfigFactory.load("application")
 
-
   val environment = envConfig getString "configurableApp.environment"
 
   /** ConfigFactory.load(String) can load other files.
@@ -32,21 +30,9 @@ trait Properties {
     */
   val config = ConfigFactory.load(environment) // eg "test" or "test.conf" etc
 
-  def sessionKeyPrefix = config getString "app.session.redis.session_key_prefix"
-
-  def resourcePath = config getString "app.resource_path"
-
-  def contextPath = config getString "app.context_path"
-
-  def sessionCookie = config getString "app.session.cookie"
-
   def redisHost = config getString "app.redis.host"
 
   def redisPort = config getInt "app.redis.port"
-
-  def mediaServiceName = config getString "app.media_service.name"
-
-  def signalBroadcasterName = config getString "app.broadcaster.signal.name"
 
   def iceProtocol = config getString "app.ice.protocol"
 
