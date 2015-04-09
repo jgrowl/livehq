@@ -34,7 +34,7 @@ object PublisherMonitorApp {
 
     val channels = Seq()
     val patterns = Seq("media.publisher.*")
-    system.actorOf(Props(classOf[RedisPublisherSignalMonitor], channels, patterns)
+    system.actorOf(Props(classOf[RedisPublisherSignalMonitor], channels, patterns, properties)
       .withDispatcher("rediscala.rediscala-client-worker-dispatcher"))
   }
 }

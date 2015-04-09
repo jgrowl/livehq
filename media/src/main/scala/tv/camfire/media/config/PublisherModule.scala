@@ -9,7 +9,6 @@ import tv.camfire.media.callback._
  * Time: 7:05 PM
  */
 trait PublisherModule extends ClusterModule {
-  lazy val redis = RedisClient("livehq-redis")
+  lazy val redis = RedisClient(properties.redisHost, properties.redisPort)
   lazy val publisherCallback: PublisherCallback = wire[RedisPublisherCallback]
-  lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 }

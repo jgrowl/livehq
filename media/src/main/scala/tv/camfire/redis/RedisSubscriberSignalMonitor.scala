@@ -9,13 +9,14 @@ import org.webrtc.{IceCandidate, SessionDescription}
 import redis.actors.RedisSubscriberActor
 import redis.api.pubsub.{Message, PMessage}
 import server.Subscriber
+import tv.camfire.media.config.Properties
 import tv.camfire.webrtc.serialization.jackson.WebrtcSerializationSupport
 
 /**
  * Created by jonathan on 10/4/14.
  */
-class RedisSubscriberSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
-  extends RedisSubscriberActor(new InetSocketAddress("livehq-redis", 6379), channels, patterns) with jackson.JsonMethods
+class RedisSubscriberSignalMonitor(channels: Seq[String] = Nil, patterns: Seq[String] = Nil, properties: Properties)
+  extends RedisSubscriberActor(new InetSocketAddress(properties.redisHost, properties.redisPort), channels, patterns) with jackson.JsonMethods
   with WebrtcSerializationSupport with ActorLogging {
 
   val subscriberRegion = ClusterSharding(context.system).shardRegion(Subscriber.shardName)

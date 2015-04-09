@@ -12,6 +12,6 @@ trait SubscriberModule extends ClusterModule {
   /**
    * Server
    */
-  lazy val redis = RedisClient("livehq-redis")
+  lazy val redis = RedisClient(properties.redisHost, properties.redisPort)
   lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 }
