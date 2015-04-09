@@ -51,5 +51,5 @@ trait Properties {
   def actorSystemName = config getString "media.actor_system.name"
 
   def sharedJournalPort = "2551"
-  def sharedJournalPath = s"akka.tcp://ClusterSystem@livehq-publisher-seed:$sharedJournalPort/user/store"
+  def sharedJournalPath = s"akka.tcp://$actorSystemName@livehq-publisher-seed:$sharedJournalPort/user/store"
 }

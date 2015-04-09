@@ -25,7 +25,7 @@ trait ClusterModule extends Macwire {
   val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
     withFallback(ConfigFactory.load())
 
-  lazy implicit val actorSystem = ActorSystem("ClusterSystem", config)
+  lazy implicit val actorSystem = ActorSystem(properties.actorSystemName, config)
 
   /**
    * WebRTC
