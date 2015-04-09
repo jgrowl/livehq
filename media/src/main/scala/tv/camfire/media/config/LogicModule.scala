@@ -5,7 +5,7 @@ import com.softwaremill.macwire.Macwire
 import com.typesafe.config.ConfigFactory
 import org.webrtc.{PeerConnectionFactory, PeerConnection}
 import redis.RedisClient
-import tv.camfire.media.callback.{RedisSubscriberCallback, SubscriberCallback, Callback, RedisCallback}
+import tv.camfire.media.callback._
 import tv.camfire.media.webrtc.WebRtcHelper
 
 /**
@@ -31,7 +31,7 @@ trait LogicModule extends Macwire {
    * Server
    */
   lazy val redis = RedisClient("livehq-redis")
-  lazy val callback: Callback = wire[RedisCallback]
+  lazy val publisherCallback: PublisherCallback = wire[RedisPublisherCallback]
   lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 
   /**

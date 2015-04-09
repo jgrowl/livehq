@@ -21,7 +21,7 @@ object PublisherApp {
 
     ClusterSharding(system).start(
       typeName = Publisher.shardName,
-      entryProps = Some(Publisher.props(modules.webRtcHelper, modules.callback)),
+      entryProps = Some(Publisher.props(modules.webRtcHelper, modules.publisherCallback)),
       idExtractor = Publisher.idExtractor,
       shardResolver = Publisher.shardResolver
     )

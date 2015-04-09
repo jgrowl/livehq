@@ -32,7 +32,7 @@ object SubscriberApp {
       idExtractor = Subscriber.idExtractor,
       shardResolver = Subscriber.shardResolver)
 
-    system.actorOf(Props(new Registry(modules.webRtcHelper, modules.callback)), "registry")
+    system.actorOf(Props(new Registry(modules.webRtcHelper, modules.subscriberCallback)), "registry")
   }
 }
 
