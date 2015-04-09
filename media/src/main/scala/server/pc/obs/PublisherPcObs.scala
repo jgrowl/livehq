@@ -4,9 +4,9 @@ import akka.actor.ActorRef
 import akka.event.LoggingAdapter
 import livehq.Internal
 import org.webrtc.PeerConnection._
-import org.webrtc.{DataChannel, IceCandidate, MediaStream, PeerConnection}
+import org.webrtc.{DataChannel, IceCandidate, MediaStream}
 import server.Utils
-import tv.camfire.media.callback.Callback
+import tv.camfire.media.callback.PublisherCallback
 
 /**
  * Created by jonathan on 12/4/14.
@@ -14,13 +14,8 @@ import tv.camfire.media.callback.Callback
 class PublisherPcObs(log: LoggingAdapter,
                      pcId: String,
                      self: ActorRef,
-                     callback: Callback,
+                     callback: PublisherCallback,
                      identifier: String) extends Observer {
-
-
-//  override def onError(): Unit = {
-//    log.error(s"$pcId.onError.")
-//  }
 
   override def onRenegotiationNeeded() {
 

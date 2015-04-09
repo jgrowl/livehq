@@ -1,7 +1,7 @@
 package server.registry
 
 import akka.actor._
-import tv.camfire.media.callback.Callback
+import tv.camfire.media.callback.SubscriberCallback
 import tv.camfire.media.webrtc.WebRtcHelper
 
 import scala.collection.mutable
@@ -19,7 +19,7 @@ object Registry {
  * Date: 5/2/13
  * Time: 8:06 PM
  */
-class Registry(webRtcHelper: WebRtcHelper, callback: Callback) extends Actor with ActorLogging {
+class Registry(webRtcHelper: WebRtcHelper, callback: SubscriberCallback) extends Actor with ActorLogging {
   private val _entries = mutable.Map.empty[String, ActorRef]
 
   override def receive: Receive = {

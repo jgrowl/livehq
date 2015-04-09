@@ -3,7 +3,7 @@ package tv.camfire.media.config
 import akka.actor.ActorSystem
 import com.softwaremill.macwire.Macwire
 import com.typesafe.config.ConfigFactory
-import org.webrtc.{PeerConnectionFactory, PeerConnection}
+import org.webrtc.{PeerConnection, PeerConnectionFactory}
 import redis.RedisClient
 import tv.camfire.media.callback._
 import tv.camfire.media.webrtc.WebRtcHelper
@@ -13,7 +13,7 @@ import tv.camfire.media.webrtc.WebRtcHelper
  * Date: 7/22/13
  * Time: 7:05 PM
  */
-trait LogicModule extends Macwire {
+trait ClusterModule extends Macwire {
   /**
    * Utilities & Configuration
    */
@@ -26,13 +26,6 @@ trait LogicModule extends Macwire {
     withFallback(ConfigFactory.load())
 
   lazy implicit val actorSystem = ActorSystem("ClusterSystem", config)
-
-  /**
-   * Server
-   */
-  lazy val redis = RedisClient("livehq-redis")
-  lazy val publisherCallback: PublisherCallback = wire[RedisPublisherCallback]
-  lazy val subscriberCallback: SubscriberCallback = wire[RedisSubscriberCallback]
 
   /**
    * WebRTC

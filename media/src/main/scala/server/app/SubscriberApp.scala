@@ -4,12 +4,12 @@ import akka.actor._
 import akka.contrib.pattern.ClusterSharding
 import server.registry.Registry
 import server.{Publisher, SharedJournalStarter, Subscriber}
-import tv.camfire.media.config.LogicModule
+import tv.camfire.media.config.SubscriberModule
 
 object SubscriberApp {
 
   def run(p: Int, startStore: Boolean): Unit = {
-    val modules: LogicModule = new LogicModule {
+    val modules: SubscriberModule = new SubscriberModule {
       def port(): String = {
         p.toString
       }

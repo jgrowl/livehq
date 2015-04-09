@@ -6,9 +6,9 @@ import akka.event.LoggingAdapter
 import akka.persistence.PersistentActor
 import livehq._
 import org.webrtc.{IceCandidate, SessionDescription}
-import server.Publisher.{RequestPeerConnection, Candidate, Offer}
+import server.Publisher.{Candidate, Offer, RequestPeerConnection}
 import server.pc.obs.{PublisherPcObs, PublisherToRegistryPcObs}
-import tv.camfire.media.callback.Callback
+import tv.camfire.media.callback.PublisherCallback
 import tv.camfire.media.webrtc.WebRtcHelper
 
 import scala.collection.mutable
@@ -31,7 +31,7 @@ object Publisher {
 //  case class ChangeBody(postId: String, body: String) extends Command
 //  case class Publish(postId: String) extends Command
 
-  def props(webrtcHelper: WebRtcHelper, callback: Callback): Props =
+  def props(webrtcHelper: WebRtcHelper, callback: PublisherCallback): Props =
     Props(new Publisher(webrtcHelper, callback))
 
   val idExtractor: ShardRegion.IdExtractor = {
@@ -78,8 +78,7 @@ object Publisher {
   case class RequestPeerConnection(identifier: String, uuid: String) extends Command
 }
 
-//class Publisher(authorListing: ActorRef) extends PersistentActor with ActorLogging {
-  class Publisher(webRtcHelper: WebRtcHelper, callback: Callback) extends PersistentActor with ActorLogging {
+  class Publisher(webRtcHelper: WebRtcHelper, callback: PublisherCallback) extends PersistentActor with ActorLogging {
 
   def _identifier = self.path.name
   val pcId = Log.pcId(_identifier)
@@ -164,8 +163,6 @@ object Publisher {
   override def receiveRecover: Receive = {
     case _ =>
       log.warning("recovering message.... not implemented.")
-
-
   }
 
   override def receiveCommand: Receive = {

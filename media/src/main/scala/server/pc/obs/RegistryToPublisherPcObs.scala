@@ -1,12 +1,12 @@
 package server.pc.obs
 
-import akka.actor.{PoisonPill, ActorRef}
+import akka.actor.{ActorRef, PoisonPill}
 import akka.event.LoggingAdapter
 import livehq.Internal
 import org.webrtc.PeerConnection.{IceConnectionState, IceGatheringState, SignalingState}
 import org.webrtc.{DataChannel, IceCandidate, MediaStream, PeerConnection}
 import server.Utils
-import tv.camfire.media.callback.Callback
+import tv.camfire.media.callback.SubscriberCallback
 import tv.camfire.media.webrtc.WebRtcHelper
 
 /**
@@ -17,18 +17,16 @@ class RegistryToPublisherPcObs(
                         logId: String,
                         webRtcHelper: WebRtcHelper,
                         self: ActorRef,
-                        callback: Callback,
+                        callback: SubscriberCallback,
                         identifier: String,
                         uuid: String
                         ) extends PeerConnection.Observer {
+
+
   override def onSignalingChange(signalState: SignalingState): Unit = {
     log.info(s"$logId.onSignalingChange : ${signalState.name()}")
     callback.onRegistryPubSignalingChange(identifier, uuid, signalState)
   }
-
-//  override def onError(): Unit = {
-//    log.error(s"$logId.onError!")
-//  }
 
   override def onRenegotiationNeeded() {
 

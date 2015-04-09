@@ -2,12 +2,11 @@ package server.registry
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.contrib.pattern.ClusterSharding
-import server.{Publisher, Utils}
-import Publisher.RequestPeerConnection
 import livehq._
-import server.{Publisher, Utils}
+import server.Publisher.RequestPeerConnection
 import server.pc.obs.RegistryToPublisherPcObs
-import tv.camfire.media.callback.Callback
+import server.{Publisher, Utils}
+import tv.camfire.media.callback.SubscriberCallback
 import tv.camfire.media.webrtc.WebRtcHelper
 
 import scala.collection.mutable
@@ -16,7 +15,7 @@ import scala.collection.mutable
 /**
  * Created by jonathan on 12/12/14.
  */
-class RegistryEntry(webRtcHelper: WebRtcHelper, callback: Callback, _identifier: String)
+class RegistryEntry(webRtcHelper: WebRtcHelper, callback: SubscriberCallback, _identifier: String)
   extends Actor with ActorLogging {
 
   private val _publisherRegion = ClusterSharding(context.system).shardRegion(Publisher.shardName)
