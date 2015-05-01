@@ -8,6 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "docker"
   config.vm.synced_folder "~/.ivy2", "/home/app/.ivy2", :create => true
+  config.vm.synced_folder "~/.pub-cache", "/home/app/.pub-cache", :create => true
 
   config.vm.define "consul-server" do |consul_server|
     consul_server.vm.provider "docker" do |docker|
@@ -175,11 +176,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       docker.image = "livehq/web:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.ports = ["8080:8080"]
-      # docker.create_args = %w(-w /vagrant/web)
-      docker.create_args = %w(-w /vagrant/signal/client/example)
+      docker.create_args = %w(-w /vagrant/signal/client/example --dns-search service.consul)
       docker.env = {
           'SERVICE_NAME' => 'livehq-web',
-          'PATH' => '/usr/lib/dart/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
           'APP_UID' => Process.uid,
           'APP_GUID' => Process.gid
       }

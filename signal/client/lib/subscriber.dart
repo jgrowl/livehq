@@ -1,4 +1,12 @@
-part of webrtc.signal;
+library webrtc_signal.subscriber;
+
+import 'dart:html';
+import 'dart:async';
+
+import 'package:logging/logging.dart';
+import 'signal_handler.dart';
+import 'web_rtc_config.dart';
+import 'webrtc_signal.dart';
 
 class Subscriber {
   static const offer = 'web.subscriber.webrtc.offer';

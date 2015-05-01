@@ -1,4 +1,9 @@
-part of webrtc.signal;
+import 'dart:html';
+import 'dart:async';
+
+import 'package:logging/logging.dart';
+import 'signal_handler.dart';
+import 'web_rtc_config.dart';
 
 class Publisher {
   static const offer = 'web.publisher.webrtc.offer';
@@ -19,7 +24,7 @@ class Publisher {
 
   get identifier => _identifier;
 
-  Publisher(this._identifier, this._signalHandler, [this.webRtcConfig]) {
+  Publisher(this._identifier, this._mediaStreams, this._signalHandler, [this.webRtcConfig]) {
     log.finest("Initializing Publisher($_identifier).");
 
     if (this.webRtcConfig == null) {
@@ -63,21 +68,6 @@ class Publisher {
     _createOffer(_peerConnection).then((RtcSessionDescription offer) {
       _signalHandler.offer(_identifier, offer);
     });
-  }
-
-  Future createMediaStream() {
-    var completer = new Completer();
-    window.navigator.getUserMedia(audio: this.webRtcConfig.mediaConfig['audio'],
-    video: webRtcConfig.mediaConfig['video']).then((stream) {
-      log.info("Adding MediaStream: [${stream.label}}");
-      _mediaStreams.add(stream);
-      completer.complete(true);
-    }).catchError((issue) {
-      log.severe(issue);
-      completer.completeError(issue);
-    });
-
-    return completer.future;
   }
 
   _createPeerConnection() {

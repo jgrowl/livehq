@@ -1,18 +1,43 @@
-library webrtc.signal;
+library webrtc_signal;
 
 import 'dart:html';
 import 'dart:async';
 import 'dart:convert' show JSON;
-
+import 'package:observe/observe.dart';
 import 'package:logging/logging.dart';
+import 'package:di/di.dart';
+import 'package:di/annotations.dart';
 
-part 'signal_handler.dart';
-part 'web_socket_signal_handler.dart';
-part 'publisher.dart';
-part 'subscriber.dart';
-part 'publisher_subscriber_factory.dart';
-part 'identifier_resolver.dart';
+// Why are we importing/exporting? See https://code.google.com/p/dart/issues/detail?id=20314
+import 'web_rtc_config.dart';
+import 'capturer.dart';
+import 'manager.dart';
+import 'publisher.dart';
+import 'subscriber.dart';
+import 'web_socket_signal_handler.dart';
+import 'signal_handler.dart';
+import 'publisher_factory.dart';
+import 'subscriber_factory.dart';
+import 'identifier_resolver.dart';
 
+export 'dart:html';
+export 'dart:async';
+
+export 'package:logging/logging.dart';
+export 'package:observe/observe.dart';
+export 'package:di/di.dart';
+export 'package:di/annotations.dart';
+
+export 'web_rtc_config.dart';
+export 'capturer.dart';
+export 'manager.dart';
+export 'publisher.dart';
+export 'subscriber.dart';
+export 'web_socket_signal_handler.dart';
+export 'signal_handler.dart';
+export 'publisher_factory.dart';
+export 'subscriber_factory.dart';
+export 'identifier_resolver.dart';
 
 class Signal {
 
@@ -29,44 +54,4 @@ class Message {
 
   Message(this.identifier, this.type, this.data);
 }
-
-class WebRtcConfig {
-  var iceServers = {
-      'iceServers': [{
-          'url': 'stun:stun.l.google.com:19302'
-      }]
-  };
-
-  var mediaConfig = {
-      'audio': false,
-      'video': true
-  };
-
-  Map dataConfig = {
-      'optional': [
-          {'RtpDataChannels': 'true'},
-          {'DtlsSrtpKeyAgreement': 'false'}
-      ]
-  };
-
-/* dart2js doesn't do recursive convertDartToNative_Dictionary()
-   * and it fails in Chrome
-   * so I had to remove constraints for now
-  var _constraints = {
-    'optional': [],
-    'mandatory': {
-      'OfferToReceiveAudio': true,
-      'OfferToReceiveVideo': true
-    }
-  };
-  */
-//  var _constraints = {};
-  var constraints = {
-      'optional': [], 'mandatory': {
-          'OfferToReceiveAudio': true,
-          'OfferToReceiveVideo': true
-      }
-  };
-}
-
 

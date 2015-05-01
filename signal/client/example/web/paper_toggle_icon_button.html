@@ -1,0 +1,15 @@
+<!--<link rel="import" href="../core-a11y-keys/core-a11y-keys.html">-->
+<polymer-element name="paper-toggle-icon-button" attributes="checked disabled activeIcon inactiveIcon"
+                 role="button"
+                 aria-pressed="false" tabindex="0">
+    <template>
+        <ul>
+            <!--<link rel="stylesheet" href="paper-toggle-button.css">-->
+            <!--<core-a11y-keys target="{{}}" keys="space" on-keys-pressed="{{tap}}"></core-a11y-keys>-->
+            <div id="toggleContainer" checked?="{{checked}}" disabled?="{{disabled}}" on-tap="{{toggleChecked}}">
+                <paper-icon-button id="toggleButton" class="toggle toggle-button" icon="{{icon}}"></paper-icon-button>
+            </div>
+        </ul>
+    </template>
+    <script type="application/dart" src="paper_toggle_icon_button.dart"></script>
+</polymer-element>

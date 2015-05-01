@@ -1,26 +1,20 @@
-part of webrtc_signal;
+library webrtc_signal.subscriber_factory;
 
-class PublisherSubscriberFactory {
-  final Logger log = new Logger('PublisherSubscriberFactory');
+import 'webrtc_signal.dart';
+
+@Injectable()
+class SubscriberFactory {
+  final Logger log = new Logger('SubscriberFactory');
 
   WebRtcConfig webRtcConfig;
 
   SignalHandler _signalHandler;
   IdentifierResolver _identifierResolver;
 
-  PublisherSubscriberFactory(this._signalHandler, this._identifierResolver, [this.webRtcConfig]) {
+  SubscriberFactory(this._signalHandler, this._identifierResolver, [this.webRtcConfig]) {
     if (this.webRtcConfig == null) {
       this.webRtcConfig = new WebRtcConfig();
     }
-  }
-
-  Future<Publisher> createPublisher() {
-    var completer = new Completer<Publisher>();
-    _identifierResolver.create().then((identifier) {
-      completer.complete(new Publisher(identifier, _signalHandler, webRtcConfig));
-    });
-
-    return completer.future;
   }
 
   Future<Subscriber> createSubscriber(String publisherIdentifier) {

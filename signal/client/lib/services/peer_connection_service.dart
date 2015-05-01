@@ -6,7 +6,7 @@ import 'dart:html';
 import 'dart:convert' show JSON;
 
 import 'package:angular/angular.dart';
-import 'package:webrtc-signal/webrtc_signal.dart';
+import 'package:webrtc_signal/webrtc_signal.dart';
 
 @Injectable()
 class PeerConnectionService {

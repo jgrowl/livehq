@@ -121,7 +121,7 @@ packages:
     description: utf
     source: hosted
     version: "0.9.0+1"
-  webrtc-signal:
+  webrtc_signal:
     description:
       path: "/Users/jonathan/Code/github.com/jgrowl/livehq/signal/client"
       relative: false

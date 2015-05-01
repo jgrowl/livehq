@@ -5,12 +5,93 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.define "publisher" do |publisher|
+    publisher.vm.provider "docker" do |docker|
+      docker.name  = "livehq-publisher"
+      docker.image = "livehq/media:0.1"
+      docker.link "livehq-consul-server:livehq-consul-server"
+      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
+      docker.ports = ["2551:2551"]
+      docker.expose = ["2551"]
+      docker.env = {
+          'SERVICE_NAME' => 'livehq-publisher-seed',
+          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
+          'APP_UID' => Process.uid,
+          'APP_GUID' => Process.gid
+      }
+      docker.cmd = %w(./packer/scripts/start-publisher.sh)
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
+  config.vm.define "publisher-monitor" do |publisher_monitor|
+    publisher_monitor.vm.provider "docker" do |docker|
+      docker.name  = "livehq-publisher-monitor"
+      docker.image = "livehq/media:0.1"
+      docker.link "livehq-consul-server:livehq-consul-server"
+      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
+      docker.ports = ["2552:2552"]
+      docker.expose = ["2552"]
+      docker.env = {
+          'SERVICE_NAME' => 'livehq-publisher-monitor-seed',
+          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
+          'APP_UID' => Process.uid,
+          'APP_GUID' => Process.gid
+      }
+      docker.cmd = %w(./packer/scripts/start-publisher-monitor.sh)
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
+  config.vm.define "subscriber" do |subscriber|
+    subscriber.vm.provider "docker" do |docker|
+      docker.name  = "livehq-subscriber"
+      docker.image = "livehq/media:0.1"
+      docker.link "livehq-consul-server:livehq-consul-server"
+      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
+      docker.ports = ["2553:2553"]
+      docker.env = {
+          'SERVICE_NAME' => 'livehq-subscriber-seed',
+          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
+          'APP_UID' => Process.uid,
+          'APP_GUID' => Process.gid
+      }
+
+      docker.cmd = %w(./packer/scripts/start-subscriber.sh)
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
+  config.vm.define "subscriber-monitor" do |media|
+    media.vm.provider "docker" do |docker|
+      docker.name  = "livehq-subscriber-monitor"
+      docker.image = "livehq/media:0.1"
+      docker.link "livehq-consul-server:livehq-consul-server"
+      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
+      docker.ports = ["2554:2554"]
+      docker.env = {
+          'SERVICE_NAME' => 'livehq-subscriber-monitor-seed',
+          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
+          'APP_UID' => Process.uid,
+          'APP_GUID' => Process.gid
+      }
+
+      docker.cmd = %w(./packer/scripts/start-subscriber-monitor.sh)
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "livehq"
+  # config.vm.box = "livehq"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

@@ -1,8 +1,7 @@
 #!/bin/sh
+./packer/scripts/setup-consul.sh
 
-#ls -l /etc/profile.d
-#echo $PATH
+usermod -u $APP_UID app
+groupmod -g $APP_GUID app
 
-pub get
-pub serve --hostname=0.0.0.0 --mode=debug
-
+sudo -u app ./packer/scripts/pub.sh

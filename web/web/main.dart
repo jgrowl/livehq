@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 
 import 'package:angular_oauthio_wrapper/angular_oauthio_wrapper.dart';
 import 'package:satellizer/satellizer.dart';
-import 'package:webrtc-signal/webrtc_signal.dart';
+import 'package:webrtc_signal/webrtc_signal.dart';
 
 import 'package:web/services/peer_connection_service.dart';
 import 'package:web/controllers/app_controller.dart';

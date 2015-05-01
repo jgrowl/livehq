@@ -2,7 +2,7 @@ library app_controller;
 
 import 'package:angular/angular.dart';
 
-import 'package:webrtc-signal/webrtc_signal.dart';
+import 'package:webrtc_signal/webrtc_signal.dart';
 import 'package:web/services/peer_connection_service.dart';
 
 @Controller(

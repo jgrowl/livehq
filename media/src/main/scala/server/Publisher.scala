@@ -1,6 +1,6 @@
 package server
 
-import akka.actor.{ActorLogging, Props}
+import akka.actor.{PoisonPill, ActorLogging, Props}
 import akka.contrib.pattern.ShardRegion
 import akka.event.LoggingAdapter
 import akka.persistence.PersistentActor
@@ -14,22 +14,6 @@ import tv.camfire.media.webrtc.WebRtcHelper
 import scala.collection.mutable
 
 object Publisher {
-
-//  def props(authorListing: ActorRef): Props =
-//    Props(new Publisher(authorListing))
-//
-//  object PostContent {
-//    val empty = PostContent("", "", "")
-//  }
-//  case class PostContent(author: String, title: String, body: String)
-//
-//  sealed trait Command {
-//    def postId: String
-//  }
-//  case class AddPost(postId: String, content: PostContent) extends Command
-//  case class GetContent(postId: String) extends Command
-//  case class ChangeBody(postId: String, body: String) extends Command
-//  case class Publish(postId: String) extends Command
 
   def props(webrtcHelper: WebRtcHelper, callback: PublisherCallback): Props =
     Props(new Publisher(webrtcHelper, callback))
@@ -48,39 +32,19 @@ object Publisher {
 
   val shardName: String = "Publisher"
 
-//  sealed trait Event
-//  case class PostAdded(content: PostContent) extends Event
-//  case class BodyChanged(body: String) extends Event
-//  case object PostPublished extends Event
-
-//  val idExtractor: ShardRegion.IdExtractor = {
-//    case cmd: Command => (cmd.postId, cmd)
-//  }
-//
-//  val shardResolver: ShardRegion.ShardResolver = msg => msg match {
-//    case cmd: Command => (math.abs(cmd.postId.hashCode) % 100).toString
-//  }
-
-
-//  private case class State(content: PostContent, published: Boolean) {
-
-//    def updated(evt: Event): State = evt match {
-//      case PostAdded(c)   => copy(content = c)
-//      case BodyChanged(b) => copy(content = content.copy(body = b))
-//      case PostPublished  => copy(published = true)
-//    }
-//  }
-
   case class Offer(identifier: String, sessionDescription: SessionDescription) extends Command
+
   case class Candidate(identifier: String, iceCandidate: IceCandidate) extends Command
+
   case class Subscribe(identifier: String, publisherIdentifier: String) extends Command
 
   case class RequestPeerConnection(identifier: String, uuid: String) extends Command
 }
 
-  class Publisher(webRtcHelper: WebRtcHelper, callback: PublisherCallback) extends PersistentActor with ActorLogging {
+class Publisher(webRtcHelper: WebRtcHelper, callback: PublisherCallback) extends PersistentActor with ActorLogging {
 
   def _identifier = self.path.name
+
   val pcId = Log.pcId(_identifier)
   log.info(s"$pcId created.")
   var _incomingPeerConnection: StandardPcDetails = null
@@ -106,60 +70,6 @@ object Publisher {
   // self.path.name is the entry identifier (utf-8 URL-encoded)
   override def persistenceId: String = self.path.parent.name + "-" + self.path.name
 
-//  // passivate the entity when no activity
-//  context.setReceiveTimeout(2.minutes)
-
-//  private var state = State(PostContent.empty, false)
-
-//  override def receiveRecover: Receive = {
-//    case evt: PostAdded =>
-//      context.become(created)
-//      state = state.updated(evt)
-//    case evt @ PostPublished =>
-//      context.become(published)
-//      state = state.updated(evt)
-//    case evt: Event => state =
-//      state.updated(evt)
-//  }
-
-//  override def receiveCommand: Receive = initial
-//
-//  def initial: Receive = {
-//    case GetContent(_) => sender() ! state.content
-//    case AddPost(_, content) =>
-//      if (content.author != "" && content.title != "")
-//        persist(PostAdded(content)) { evt =>
-//          state = state.updated(evt)
-//          context.become(created)
-//          log.info("New post saved: {}", state.content.title)
-//        }
-//  }
-//
-//  def created: Receive = {
-//    case GetContent(_) => sender() ! state.content
-//    case ChangeBody(_, body) =>
-//      persist(BodyChanged(body)) { evt =>
-//        state = state.updated(evt)
-//        log.info("Post changed: {}", state.content.title)
-//      }
-//    case Publish(postId) =>
-//      persist(PostPublished) { evt =>
-//        state = state.updated(evt)
-//        context.become(published)
-//        val c = state.content
-//        log.info("Post published: {}", c.title)
-//        authorListing ! Subscriber.PostSummary(c.author, postId, c.title)
-//      }
-//  }
-//
-//  def published: Receive = {
-//    case GetContent(_) => sender() ! state.content
-//  }
-
-//  override def unhandled(msg: Any): Unit = msg match {
-//    case ReceiveTimeout => context.parent ! Passivate(stopMessage = PoisonPill)
-//    case _              => super.unhandled(msg)
-//  }
   override def receiveRecover: Receive = {
     case _ =>
       log.warning("recovering message.... not implemented.")
@@ -212,21 +122,8 @@ object Publisher {
           pcDetail.peerConnection.close()
         }
       }
-      // TODO: We shouldn't re-init here. Instead we should become a state that doesn't accept new messages!
-      _init()
 
-//    case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
-//      log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")
-//      _incomingPeerConnection.peerConnection.addStream(mediaStream, webRtcHelper.createConstraints)
-//
-//      // Update offer
-//      val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)
-//      if (offer.isDefined) {
-//        log.info(s"Added MediaStream(${mediaStream.label()}). Sending updated offer.")
-//        callback.sendOffer(_identifier, offer.get)
-//      } else {
-//        log.error(s"Added MediaStream(${mediaStream.label()}. but failed to create offer! No offer will be sent!")
-//      }
+      self ! PoisonPill
 
     case _ =>
       log.info("Received unknown message!")

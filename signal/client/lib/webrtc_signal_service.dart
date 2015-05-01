@@ -1,4 +1,4 @@
-library angular.webrtc.signal.service;
+library angular.webrtc_signal.service;
 
 import 'dart:js';
 import 'dart:async';

@@ -1,0 +1,17 @@
+<!--<link rel="import" href="../core-a11y-keys/core-a11y-keys.html">-->
+<link rel="import" href="paper_toggle_icon_button.html">
+
+<polymer-element name="livehq-capturer" attributes="">
+    <template>
+        <paper-toggle-icon-button activeIcon="settings-input-composite" inactiveIcon="settings-input-svideo" on-tap="{{capture}}"></paper-toggle-icon-button>
+        <paper-toast id="capture-started" text="Now capturing media!"></paper-toast>
+
+        <template if="{{ !capturer.mediaStreams.isEmpty }}">
+            <paper-toggle-icon-button activeIcon="av:mic" inactiveIcon="av:mic-off" checked="true"></paper-toggle-icon-button>
+            <paper-toggle-icon-button activeIcon="av:videocam" inactiveIcon="av:videocam-off" checked="true"></paper-toggle-icon-button>
+        </template>
+
+        <!--<paper-icon-button id="toggleButton" class="toggle toggle-button" icon="image:camera-roll"></paper-icon-button>-->
+    </template>
+    <script type="application/dart" src="livehq_capturer.dart"></script>
+</polymer-element>

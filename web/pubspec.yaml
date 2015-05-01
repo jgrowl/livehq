@@ -10,7 +10,7 @@ dependencies:
   satellizer:
     path: /Users/jonathan/code/github.com/jgrowl/satellizer.dart
 #    git: git://github.com/jgrowl/satellizer.dart.git
-  webrtc-signal:
+  webrtc_signal:
     path: /Users/jonathan/Code/github.com/jgrowl/livehq/signal/client
   shadow_dom: any
 dev_dependencies:

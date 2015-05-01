@@ -1,0 +1,16 @@
+<link rel="import" href="livehq_capturer.html">
+<link rel="import" href="livehq_publisher.html">
+<link rel="import" href="livehq_subscriber.html">
+
+<polymer-element name="livehq-manager" attributes="">
+    <template>
+        <livehq-capturer></livehq-capturer>
+        <template if="{{ !manager.capturer.mediaStreams.isEmpty }}">
+            <livehq-publisher on-publish="{{ publish }}"></livehq-publisher>
+        </template>
+        <template repeat="{{ subscriber in manager.subscribers }}">
+            <livehq-subscriber id="subscriber-{{ subscriber.identifier }}" identifier="{{ subscriber.identifier }}" on-subscribe="{{ subscribe }}"></livehq-subscriber>
+        </template>
+    </template>
+    <script type="application/dart" src="livehq_manager.dart"></script>
+</polymer-element>

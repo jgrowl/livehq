@@ -1,4 +1,10 @@
-part of webrtc.signal;
+//part of webrtc_signal;
+library webrtc_signal.signal_handler;
+
+import 'dart:html';
+import 'dart:async';
+import 'dart:convert' show JSON;
+import 'webrtc_signal.dart';
 
 abstract class SignalHandler {
   StreamController onMessageController = new StreamController.broadcast();
