@@ -17,9 +17,10 @@
     [
       {
         "type": "docker-import",
-        "repository": "livehq/api",
+        "repository": "jgrowl/livehq-api",
         "tag": "0.1"
-      }
+      },
+      "docker-push"
     ]
   ]
 }

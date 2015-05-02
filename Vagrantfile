@@ -55,7 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "publisher" do |publisher|
     publisher.vm.provider "docker" do |docker|
       docker.name  = "livehq-publisher"
-      docker.image = "livehq/media:0.1"
+      docker.image = "jgrowl/livehq-media:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
       docker.ports = ["2551:2551"]
@@ -75,7 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "publisher-monitor" do |publisher_monitor|
     publisher_monitor.vm.provider "docker" do |docker|
       docker.name  = "livehq-publisher-monitor"
-      docker.image = "livehq/media:0.1"
+      docker.image = "jgrowl/livehq-media:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
       docker.ports = ["2552:2552"]
@@ -95,7 +95,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "subscriber" do |subscriber|
     subscriber.vm.provider "docker" do |docker|
       docker.name  = "livehq-subscriber"
-      docker.image = "livehq/media:0.1"
+      docker.image = "jgrowl/livehq-media:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
       docker.ports = ["2553:2553"]
@@ -115,7 +115,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "subscriber-monitor" do |media|
     media.vm.provider "docker" do |docker|
       docker.name  = "livehq-subscriber-monitor"
-      docker.image = "livehq/media:0.1"
+      docker.image = "jgrowl/livehq-media:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
       docker.ports = ["2554:2554"]
@@ -154,7 +154,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "api" do |api|
     api.vm.provider "docker" do |docker|
       docker.name  = "livehq-api"
-      docker.image = "livehq/api:0.1"
+      docker.image = "jgrowl/livehq-api:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.create_args = %w(-w /vagrant/api --dns-search service.consul)
       docker.ports = ["3000:3000"]
@@ -173,7 +173,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "web" do |media|
     media.vm.provider "docker" do |docker|
       docker.name  = "livehq-web"
-      docker.image = "livehq/web:0.1"
+      docker.image = "jgrowl/livehq-web:0.1"
       docker.link "livehq-consul-server:livehq-consul-server"
       docker.ports = ["8080:8080"]
       docker.create_args = %w(-w /vagrant/signal/client/example --dns-search service.consul)
