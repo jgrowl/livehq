@@ -17,7 +17,7 @@
   "builders": [
     {
       "type": "docker",
-      "image": "livehq/base:0.1",
+      "image": "jgrowl/livehq-base:0.1",
       "pull": false,
       "export_path": "image.tar"
     }
@@ -26,9 +26,10 @@
     [
       {
         "type": "docker-import",
-        "repository": "livehq/ruby",
+        "repository": "jgrowl/livehq-ruby",
         "tag": "0.1"
-      }
+      },
+      "docker-push"
     ]
   ]
 }

@@ -30,9 +30,10 @@
     [
       {
         "type": "docker-import",
-        "repository": "livehq/base",
+        "repository": "jgrowl/livehq-base",
         "tag": "0.1"
-      }
+      },
+      "docker-push"
     ]
   ]
 }
