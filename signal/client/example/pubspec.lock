@@ -65,6 +65,10 @@ packages:
     description: initialize
     source: hosted
     version: "0.6.1"
+  json_object:
+    description: json_object
+    source: hosted
+    version: "1.0.19"
   logging:
     description: logging
     source: hosted

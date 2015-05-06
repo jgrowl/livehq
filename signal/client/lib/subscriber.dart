@@ -20,7 +20,9 @@ class Subscriber {
 
   WebRtcConfig webRtcConfig;
 
-  List<MediaStream> _mediaStreams = new List<MediaStream>();
+  List<MediaStream> _mediaStreams = toObservable([]);
+
+  List<MediaStream> get mediaStreams => _mediaStreams;
 
   RtcPeerConnection _peerConnection;
 
@@ -88,11 +90,12 @@ class Subscriber {
 //      String url = Url.createObjectUrl(e.stream);
 //      pc1Video.src = url;
 
-    var video = new VideoElement()
-      ..autoplay = true
-      ..src = Url.createObjectUrl(e.stream)
-      ..onLoadedMetadata.listen((e) => log.fine("onLoadedMetaData: ${e.type} "));
-      document.body.append(video);
+//      // TODO: we should no longer do this!
+//    var video = new VideoElement()
+//      ..autoplay = true
+//      ..src = Url.createObjectUrl(e.stream)
+//      ..onLoadedMetadata.listen((e) => log.fine("onLoadedMetaData: ${e.type} "));
+//      document.body.append(video);
     });
 
     pc.onRemoveStream.listen((e) {

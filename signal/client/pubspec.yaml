@@ -3,4 +3,5 @@ dependencies:
   browser: any
 #  angular: ">=1.1.0 <2.0.0"
   observe: any
+  json_object: any
   logging: ">=0.9.3 <0.10.0"

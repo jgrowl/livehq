@@ -1,8 +1,10 @@
-<!--<link rel="import" href="../core-a11y-keys/core-a11y-keys.html">-->
-<polymer-element name="livehq-subscriber" attributes="identifier">
+<polymer-element name="livehq-subscriber" attributes="subscriber">
     <template>
-        <paper-icon-button id="subscriber-button" class="toggle toggle-button" icon="av:movie" on-tap="{{ subscribe }}"></paper-icon-button>
-
+        <!--..onLoadedMetadata.listen((e) => log.fine("onLoadedMetaData: ${e.type} "));-->
+        <!--onloadedmetadata="{{ onLoadMetaData }}"-->
+        <template repeat="{{ mediaStream in subscriber.mediaStreams }}">
+            <video autoplay="true" src="{{ createObjectUrl(mediaStream) }}" ></video>
+        </template>
         <content>
         </content>
     </template>

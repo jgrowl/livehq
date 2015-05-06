@@ -27,4 +27,24 @@ class SubscriberFactory {
     return completer.future;
   }
 
+  DelayedSubscriber createDelayedSubscriber(String publisherIdentifier) {
+    return new DelayedSubscriber(publisherIdentifier);
+  }
+
+}
+
+class DelayedSubscriber {
+
+  String publisherIdentifier;
+
+  DelayedSubscriber(this.publisherIdentifier);
+
+
+  void create() {
+
+
+
+  }
+
+  
 }

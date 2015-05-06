@@ -1,16 +1,35 @@
 <link rel="import" href="livehq_capturer.html">
 <link rel="import" href="livehq_publisher.html">
 <link rel="import" href="livehq_subscriber.html">
+<link rel="import" href="livehq_peer_connection_description.html">
+<link rel="import" href="../packages/core_elements/core_ajax_dart.html">
 
 <polymer-element name="livehq-manager" attributes="">
     <template>
+        <core-ajax-dart
+                auto
+                url="{{ manager.peerConnectionsUrl }}"
+                handleAs="json"
+                on-core-response="{{ handlePeerConnectionsResponse }}"></core-ajax-dart>
+
+        <script type="application/dart" src="livehq_manager.dart"></script>
+
         <livehq-capturer></livehq-capturer>
         <template if="{{ !manager.capturer.mediaStreams.isEmpty }}">
             <livehq-publisher on-publish="{{ publish }}"></livehq-publisher>
         </template>
         <template repeat="{{ subscriber in manager.subscribers }}">
-            <livehq-subscriber id="subscriber-{{ subscriber.identifier }}" identifier="{{ subscriber.identifier }}" on-subscribe="{{ subscribe }}"></livehq-subscriber>
+            <!--<livehq-subscriber id="subscriber-{{ subscriber.identifier }}" identifier="{{ subscriber.identifier }}"></livehq-subscriber>-->
+            <livehq-subscriber subscriber="{{ subscriber }}"></livehq-subscriber>
         </template>
+
+        <template repeat="{{ peerConnectionDescription in manager.availablePcs }}">
+            <!--<livehq-subscriber id="subscriber-{{ subscriber.identifier }}" identifier="{{ subscriber.identifier }}" on-subscribe="{{ subscribe }}"></livehq-subscriber>-->
+            <livehq-peer-connection-description peerConnectionDescription="{{ peerConnectionDescription }}" on-subscribe="{{ subscribe }}">
+            </livehq-peer-connection-description>
+
+            <p>{{time}}</p>
+        </template>
+
     </template>
-    <script type="application/dart" src="livehq_manager.dart"></script>
 </polymer-element>

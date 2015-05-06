@@ -1,4 +1,5 @@
 import 'package:polymer/polymer.dart';
+import 'package:json_object/json_object.dart';
 
 import 'package:webrtc_signal/webrtc_signal.dart';
 
@@ -9,6 +10,8 @@ class LiveHqManager extends PolymerElement {
   final Logger log = new Logger('LiveHqManager');
   @published Manager manager;
 
+//  String peerConnectionsUrl = 'http://localhost:3000/streams';
+
   LiveHqManager.created() : super.created();
 
   void setManager(Manager manager) {
@@ -17,21 +20,12 @@ class LiveHqManager extends PolymerElement {
     LiveHqCapturer liveHqCapturer = this.shadowRoot.querySelector("livehq-capturer");
     liveHqCapturer.capturer = manager.capturer;
 
-//    print(this.shadowRoot.querySelector("#publishButton"));
-
-//    LiveHqPublisher liveHqPublisher = this.shadowRoot.querySelector("livehq-publisher");
-//    print(liveHqPublisher);
-
-//    var publishButton = this.shadowRoot.querySelector("livehq-publisher");
-//    var publishButton = this.shadowRoot.querySelector("livehq-publisher");
-
-//    var subscription = elem.onClick.listen(
-//            (event) => print('click!'));
-//
-//    subscription.cancel();
-
-//    print(this.shadowRoot.querySelector("livehq-publisher").shadowRoot.querySelector("paper-icon-button"));
-
+    // For now we will just poll for updates
+    const fiveSec = const Duration(seconds:5);
+    new Timer.periodic(fiveSec, (Timer t) {
+      log.finest("Updating available streams.");
+      this.shadowRoot.querySelector("core-ajax-dart").go();
+    });
   }
 
   void publish() {
@@ -41,11 +35,23 @@ class LiveHqManager extends PolymerElement {
 
   void subscribe(CustomEvent event) {
     var identifier = event.detail['identifier'];
-    var subscriber = manager.subscribers.where((x) {
-      return x.identifier == identifier;
-    }).first;
-
-   subscriber.subscribe();
+    log.finest("Subscribing to $identifier");
+    manager.createSubscriber(identifier);
+//    var subscriber = manager.subscribers.where((x) {
+//      return x.identifier == identifier;
+//    }).first;
+//
+//   subscriber.subscribe();
   }
 
+  void handlePeerConnectionsResponse(response) {
+    JsonObject data = new JsonObject.fromMap(response.detail);
+    var pcs = data.response.pcs;
+    print(pcs.toString());
+    manager.setAvailablePcs(pcs);
+  }
+
+  int get time {
+    return new DateTime.now().millisecondsSinceEpoch;
+  }
 }
