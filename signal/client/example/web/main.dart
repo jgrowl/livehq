@@ -59,21 +59,6 @@ class Config {
 
 }
 
-////  void test() async {
-////    var publisher = await factory.createPublisher();
-////
-////    ButtonElement startCamera = query("#start-camera");
-////    startCamera.onClick.listen((event) => publisher.createMediaStream());
-////
-////    ButtonElement publish = query("#publish");
-////    publish.onClick.listen((event) => publisher.publishStreams());
-////
-////    var subscriber = await factory.createSubscriber(publisher.identifier);
-////    ButtonElement subscribe = query("#subscribe");
-////    subscribe.onClick.listen((event) => subscriber.subscribe());
-////  }
-//}
-
 void main() async {
   Logger.root.onRecord.listen((LogRecord r) {
     print("${r.time}\t${r}");
@@ -94,10 +79,7 @@ void main() async {
     ..bind(Capturer)
     ..bind(PublisherFactory)
     ..bind(SubscriberFactory)
-//    ..bind(PublisherSubscriberFactory)
     ..bind(Manager)
-
-//    var machine = new PublisherSubscriberMachine(factory);
   ]);
 
   Manager manager = injector.get(Manager);
