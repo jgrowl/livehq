@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#cd -
+#cd api
 export PATH=~app/.rbenv/bin:$PATH;
 export RBENV_ROOT=~app/.rbenv;
 eval "$(rbenv init -)";

@@ -1,6 +1,13 @@
 #!/bin/sh
 
-./scripts/setup-consul.sh
+#cwd=$(pwd)
+# Make sure we are in the script directory
+# http://stackoverflow.com/questions/3349105/how-to-set-current-working-directory-to-the-directory-of-the-script
+cd ${0%/*}
+./setup-consul.sh
+cd - && cd signal
+
+#./scripts/setup-consul.sh
 bundle
 
 # Sleeping here is ugly but I need to make sure the redis is up before starting.

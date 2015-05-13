@@ -2,9 +2,12 @@ name: webrtc_signal_example
 dependencies:
   di: ">=3.3.4 <4.0.0"
   observe: ">=0.13.0+2 <0.14.0"
-  polymer: ">=0.16.0 <0.17.0"
-  core_elements: ">=0.6.0 <0.7.0"
-  paper_elements: ">=0.6.0 <0.7.0"
+  #polymer: ">=0.16.0 <0.17.0"
+  polymer: ">=0.16.1+4 <0.17.0"
+  #core_elements: ">=0.6.0 <0.7.0"
+  core_elements: ">=0.7.1+2 <0.8.0"
+ # paper_elements: ">=0.6.0 <0.7.0"
+  paper_elements: ">=0.7.1 <0.8.0"
 
   logging: ">=0.9.3 <0.10.0"
   http_server: any
@@ -19,6 +22,7 @@ transformers:
 - polymer:
     entry_points:
     - web/index.html
+
 #    csp: true
 ##    inline_stylesheets:
 ##      lib/src/paper-shadow/paper-shadow.css: false

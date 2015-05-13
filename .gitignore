@@ -16,3 +16,6 @@ target
 
 # Vagrant
 .vagrant
+
+.ivy
+.pub-cache
