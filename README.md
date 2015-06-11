@@ -32,3 +32,20 @@ There is a fix implemented packer's master branch so the fix is on its way likel
 
 See https://github.com/mitchellh/packer/issues/1752#issuecomment-108792425
 
+# Deploying
+
+## Dependencies
+
+- docker-compose
+
+## Set Environment Variables
+ 
+    export DOCKER_CERT_PATH=~/.joyent  
+    export DOCKER_HOST=tcp://aaa.bbb.ccc.ddd:4243
+
+## Push
+
+```
+vagrant push
+```
+

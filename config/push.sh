@@ -25,7 +25,7 @@ docker-compose stop mongodb
 docker-compose rm -f mongodb
 docker-compose up -d mongodb
 
- Build media executable jar
+# Build media executable jar
 cd media
 sbt assembly
 cd -
