@@ -1,0 +1,141 @@
+#consul:
+#  image: progrium/consul
+#  ports:
+#  - "8400:8400"
+#  - "8500:8500"
+#  - "8600:53/udp"
+#  environment:
+##  - SERVICE_NAME=livehq-consul-server
+##  command: -server -advertise 172.17.0.1 -bootstrap -ui-dir /ui
+#  command: -server -advertise 10.112.72.199 -bootstrap -ui-dir /ui
+##      docker.create_args = %w(-h node1)
+#
+#registrator:
+#  image: gliderlabs/registrator:master
+#  volumes:
+#  - /var/run/docker.sock:/tmp/docker.sock
+#  links:
+#  - consul
+#  command: -internal consul://consul:8500
+##      docker.create_args = %w(-d)
+
+redis:
+  image: redis
+  ports:
+  - "6379:6379"
+  volumes:
+  - /home/ubuntu/redis.conf:/usr/local/etc/redis/redis.conf
+  links:
+  - consul
+  - registrator
+  environment:
+  - SERVICE_NAME=livehq-redis
+#          # Just an example tag.
+#          # See http://progrium.com/blog/2014/09/10/automatic-docker-service-announcement-with-registrator/
+#          # 'SERVICE_TAGS' => 'primary'
+  command: redis-server /usr/local/etc/redis/redis.conf
+#      # docker.create_args = %w(-P)
+
+publisher:
+  image: jgrowl/livehq-media:0.2
+  ports:
+  - "2551:2551"
+  volumes:
+  - /home/ubuntu/media-assembly-1.0.jar:/app/media-assembly-1.0.jar
+  - /home/ubuntu/setup-consul.sh:/app/setup-consul.sh
+  - /home/ubuntu/start-publisher-production.sh:/app/start-publisher-production.sh
+#      docker.link "livehq-consul-server:livehq-consul-server"
+#      docker.create_args = ["-w", "/vagrant/media"]
+  links:
+  - consul
+  - registrator
+  - redis
+  environment:
+  - SERVICE_NAME=livehq-publisher-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+#  dns:
+#  - 10.112.72.199
+##  - 172.17.0.1
+##  - 165.225.131.183
+#  - 8.8.8.8
+  dns_search:
+  - service.consul
+  command: /app/start-publisher-production.sh
+
+publisherMonitor:
+  image: jgrowl/livehq-media:0.2
+  ports:
+  - "2552:2552"
+  volumes:
+  - /home/ubuntu/media-assembly-1.0.jar:/app/media-assembly-1.0.jar
+  - /home/ubuntu/setup-consul.sh:/app/setup-consul.sh
+  - /home/ubuntu/start-publisher-monitor-production.sh:/app/start-publisher-monitor-production.sh
+#      docker.link "livehq-consul-server:livehq-consul-server"
+#      docker.create_args = ["-w", "/vagrant/media"]
+  links:
+  - consul
+  - registrator
+  - redis
+  environment:
+  - SERVICE_NAME=livehq-publisher-monitor-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+#  dns:
+#  - 10.112.72.199
+##  - 172.17.0.1
+##  - 165.225.131.183
+#  - 8.8.8.8
+  dns_search:
+  - service.consul
+  command: /app/start-publisher-monitor-production.sh
+
+subscriber:
+  image: jgrowl/livehq-media:0.2
+  ports:
+  - "2553:2553"
+  volumes:
+  - /home/ubuntu/media-assembly-1.0.jar:/app/media-assembly-1.0.jar
+  - /home/ubuntu/setup-consul.sh:/app/setup-consul.sh
+  - /home/ubuntu/start-subscriber-production.sh:/app/start-subscriber-production.sh
+#      docker.link "livehq-consul-server:livehq-consul-server"
+#      docker.create_args = ["-w", "/vagrant/media"]
+  links:
+  - consul
+  - registrator
+  - redis
+  environment:
+  - SERVICE_NAME=livehq-subscriber-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+#  dns:
+#  - 10.112.72.199
+##  - 172.17.0.1
+##  - 165.225.131.183
+#  - 8.8.8.8
+  dns_search:
+  - service.consul
+  command: /app/start-subscriber-production.sh
+
+subscriberMonitor:
+  image: jgrowl/livehq-media:0.2
+  ports:
+  - "2554:2554"
+  volumes:
+  - /home/ubuntu/media-assembly-1.0.jar:/app/media-assembly-1.0.jar
+  - /home/ubuntu/setup-consul.sh:/app/setup-consul.sh
+  - /home/ubuntu/start-subscriber-monitor-production.sh:/app/start-subscriber-monitor-production.sh
+#      docker.link "livehq-consul-server:livehq-consul-server"
+#      docker.create_args = ["-w", "/vagrant/media"]
+  links:
+  - consul
+  - registrator
+  - redis
+  environment:
+  - SERVICE_NAME=livehq-subscriber-monitor-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+#  dns:
+#  - 10.112.72.199
+##  - 172.17.0.1
+##  - 165.225.131.183
+#  - 8.8.8.8
+  dns_search:
+  - service.consul
+  command: /app/start-subscriber-monitor-production.sh

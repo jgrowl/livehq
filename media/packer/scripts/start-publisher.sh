@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-./packer/scripts/setup-consul.sh
-
 cp /vagrant/media/lib/native/libjingle_peerconnection_so.so /usr/local/lib/libjingle_peerconnection.so
 usermod -u $APP_UID app
 groupmod -g $APP_GUID app

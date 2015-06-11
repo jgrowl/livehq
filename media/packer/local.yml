@@ -1,0 +1,23 @@
+- name: Install livehq media
+  hosts: all
+  sudo: yes
+
+  roles:
+  - { role: php-coder.oraclejdk }
+  - { role: JasonGiedymin.sbt }
+  - { role: libjingle }
+
+  tasks:
+  - name: Install dependencies
+    apt: pkg={{ item }} state=installed
+    with_items:
+      - libgtk2.0-0
+      - libnss3
+      # Not sure if we need all of the following for VoiceEngine
+      - libasound2-dev
+      - libasound2
+      - libasound2-data
+      - module-init-tools
+      - libsndfile1-dev
+      - pulseaudio
+

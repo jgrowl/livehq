@@ -1,0 +1,175 @@
+consul:
+  image: progrium/consul
+  ports:
+#  - "10.112.72.199:8300:8300"
+#  - "10.112.72.199:8301:8301"
+#  - "10.112.72.199:8301:8301/udp"
+#  - "10.112.72.199:8302:8302"
+#  - "10.112.72.199:8302:8302/udp"
+#  - "10.112.72.199:8400:8400"
+#  - "10.112.72.199:8500:8500"
+#  - "172.17.42.1:53:53/udp"
+  - "8400:8400"
+  - "8500:8500"
+  - "8600:53/udp"
+  - "172.17.42.1:53:53/udp"
+  environment:
+  command: -server -bootstrap -ui-dir /ui
+#  command: -server -advertise 10.112.72.199 -bootstrap -ui-dir /ui
+#      docker.create_args = %w(-h node1)
+
+registrator:
+  image: gliderlabs/registrator:master
+  volumes:
+  - /var/run/docker.sock:/tmp/docker.sock
+  links:
+  - consul
+  command: -internal consul://consul:8500
+
+turnserver:
+  image: bprodoehl/turnserver
+  ports:
+  - "3478:3478"
+  - "3478:3478/udp"
+  environment:
+  - SERVICE_NAME=livehq-turnserver
+  net: host
+  restart: on-failure:10
+#      docker.create_args = %w(-d --name=turnserver --restart="on-failure:10" --net=host)
+
+redis:
+  build: redis
+  ports:
+  - "6379:6379"
+#  volumes:
+#  - /home/ubuntu/redis.conf:/usr/local/etc/redis/redis.conf
+  environment:
+  - SERVICE_NAME=livehq-redis
+#          # Just an example tag.
+#          # See http://progrium.com/blog/2014/09/10/automatic-docker-service-announcement-with-registrator/
+#          # 'SERVICE_TAGS' => 'primary'
+#  command: redis-server /usr/local/etc/redis/redis.conf
+
+mongodb:
+  build: mongodb
+  ports:
+  - "27017:27017"
+  environment:
+  - SERVICE_NAME=livehq-mongodb
+
+publisher:
+  build: media
+  ports:
+  - "2551:2551"
+  environment:
+  - SERVICE_NAME=livehq-publisher-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  working_dir: /app
+  command: "java \
+            -Djava.library.path=/usr/local/lib \
+            -Dakka.remote.netty.tcp.hostname=livehq-publisher-seed \
+           -Dakka.remote.netty.tcp.port=2551 \
+           -jar /app/media-assembly-1.0.jar publisher -p 2551"
+
+publishermonitor:
+  build: media
+  ports:
+  - "2552:2552"
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  environment:
+  - SERVICE_NAME=livehq-publisher-monitor-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+  working_dir: /app
+  command: "java \
+            -Djava.library.path=/usr/local/lib \
+            -Dakka.remote.netty.tcp.hostname=livehq-publisher-monitor-seed \
+            -Dakka.remote.netty.tcp.port=2552 \
+            -jar /app/media-assembly-1.0.jar subscriber -p 2552"
+
+subscriber:
+  build: media
+  ports:
+  - "2553:2553"
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  environment:
+  - SERVICE_NAME=livehq-subscriber-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+  working_dir: /app
+  command: "java \
+            -Djava.library.path=/usr/local/lib \
+            -Dakka.remote.netty.tcp.hostname=livehq-subscriber-seed \
+            -Dakka.remote.netty.tcp.port=2553 \
+            -jar /app/media-assembly-1.0.jar subscriber -p 2553"
+
+
+subscribermonitor:
+  build: media
+  ports:
+  - "2554:2554"
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  environment:
+  - SERVICE_NAME=livehq-subscriber-monitor-seed
+  - LD_LIBRARY_PATH=/usr/local/lib
+  working_dir: /app
+  command: "java \
+            -Djava.library.path=/usr/local/lib \
+            -Dakka.remote.netty.tcp.hostname=livehq-subscriber-monitor-seed \
+           -Dakka.remote.netty.tcp.port=2554 \
+           -jar /app/media-assembly-1.0.jar subscriber-monitor -p 2554"
+
+signal:
+#  image: ruby:2.2-onbuild
+  build: signal
+  ports:
+  - "1234:1234"
+#  volumes:
+#  - /home/ubuntu/signal:/usr/src/app
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  environment:
+  - SERVICE_NAME=livehq-signal
+  working_dir: /usr/src/app
+  command: ruby server.rb
+
+api:
+#  image: jgrowl/livehq-api:0.1
+  build: api
+  ports:
+  - "3000:3000"
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  environment:
+  - SERVICE_NAME=livehq-api
+  working_dir: /usr/src/app
+
+web:
+  #image: nginx
+  build: web
+  ports:
+  - "80:80"
+#  volumes:
+#  - /home/ubuntu/web:/usr/share/nginx/html:ro
+  dns:
+  - 172.17.42.1
+  dns_search:
+  - service.consul
+  environment:
+  - SERVICE_NAME=livehq-web
+

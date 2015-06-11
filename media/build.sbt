@@ -1,10 +1,11 @@
+//import com.sun.org.apache.xalan.internal.xsltc.cmdline.Compile
+
 //import com.typesafe.sbt.SbtStartScript
 //enablePlugins(SbtNativePackager)
 //import com.typesafe.sbt.SbtNativePackager._
 //import NativePackagerKeys._
 
 //import NativePackagerKeys._
-
 
 val akkaVersion = "2.3.9"
 
@@ -37,6 +38,9 @@ val project = Project(
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
       "com.typesafe.akka" %% "akka-contrib" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
+      "org.mongodb" %% "casbah" % "2.8.1",
+      "com.github.scullxbones" %% "akka-persistence-mongo-casbah" % "0.3.0",
+
       "com.github.scopt" %% "scopt" % "3.3.0",
       "org.scalatest" %% "scalatest" % "2.1.6" % "test",
       "commons-io" % "commons-io" % "2.4" % "test"),
@@ -63,5 +67,10 @@ val project = Project(
 //            testResults.summaries ++ multiNodeResults.summaries)
 //    }
   )
-) //configs (MultiJvm)
+)
+//  .dependsOn(RootProject(uri("git://github.com/kalondar/akka-persistence-redis.git")))
+//https://github.com/kalondar/akka-persistence-redis.git
+//dependsOn(RootProject(uri("git://github.com/sarxos/akka-journal-redis.git")))
+//configs (MultiJvm)
 //.settings(SbtStartScript.startScriptForClassesSettings: _*)
+

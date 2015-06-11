@@ -2,14 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/akka-persistence-redis-build.iml" filepath="$PROJECT_DIR$/media/.idea/modules/akka-persistence-redis-build.iml" />
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packer/base/base.iml" filepath="$PROJECT_DIR$/packer/base/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config/packer/base/base.iml" filepath="$PROJECT_DIR$/config/packer/base/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config/config.iml" filepath="$PROJECT_DIR$/config/config.iml" />
       <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/media.iml" filepath="$PROJECT_DIR$/media/.idea/modules/media.iml" />
       <module fileurl="file://$PROJECT_DIR$/media/.idea/modules/media-build.iml" filepath="$PROJECT_DIR$/media/.idea/modules/media-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packer/packer.iml" filepath="$PROJECT_DIR$/packer/packer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mongodb/mongodb.iml" filepath="$PROJECT_DIR$/mongodb/mongodb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config/packer/packer.iml" filepath="$PROJECT_DIR$/config/packer/packer.iml" />
       <module fileurl="file://$PROJECT_DIR$/media/project/.idea/modules/project.iml" filepath="$PROJECT_DIR$/media/project/.idea/modules/project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packer/redis/redis.iml" filepath="$PROJECT_DIR$/packer/redis/redis.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packer/ruby/ruby.iml" filepath="$PROJECT_DIR$/packer/ruby/ruby.iml" />
+      <module fileurl="file://$PROJECT_DIR$/redis/redis.iml" filepath="$PROJECT_DIR$/redis/redis.iml" />
       <module fileurl="file://$PROJECT_DIR$/signal/signal.iml" filepath="$PROJECT_DIR$/signal/signal.iml" />
       <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
     </modules>

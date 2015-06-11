@@ -1,0 +1,6 @@
+FROM jgrowl/livehq-media:0.3
+
+RUN mkdir /home/app
+RUN groupadd -g 1001 -r app && useradd -d /home/app -u 1001 -r -g app app
+RUN chown app:app /home/app
+USER app

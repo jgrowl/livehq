@@ -45,3 +45,4 @@ tm.out
 worker*.log
 /bin
 log
+*.log

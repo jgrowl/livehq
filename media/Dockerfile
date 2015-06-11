@@ -1,11 +1,13 @@
-FROM livehq/media:0.1
+FROM java:7
+COPY lib/native/libjingle_peerconnection_so.so /usr/local/lib/libjingle_peerconnection_so.so
 
-ADD start.sh /start.sh
-RUN chmod a+x /start.sh
+#FROM jgrowl/livehq-media:0.3
 
-# forward request and error logs to docker log collector
-#RUN ln -sf /dev/stdout /var/log/nginx/identity_access.log
-#RUN ln -sf /dev/stderr /var/log/nginx/identity_error.log
-
-#EXPOSE 80
-ENTRYPOINT ["/start.sh"]
+#RUN mkdir /home/app
+#RUN groupadd -r app && useradd -d /home/app -r -g app app
+#RUN groupadd -g 1000 -r app && useradd -d /home/app -u 1000 -r -g app app
+#RUN chown app:app /home/app
+#USER app
+#ADD . /home/app
+ADD target/scala-2.11/media-assembly-1.0.jar /app/media-assembly-1.0.jar
+#rsync -ru ./media/target/scala-2.11/media-assembly-1.0.jar $PUBLISHER_USER@$PUBLISHER_HOST:~

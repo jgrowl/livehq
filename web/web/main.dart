@@ -1,53 +1,95 @@
-import 'package:angular/angular.dart';
-import 'package:angular/application_factory.dart';
-import 'package:logging/logging.dart';
+import 'dart:html';
+import 'dart:async';
 
-import 'package:angular_oauthio_wrapper/angular_oauthio_wrapper.dart';
-import 'package:satellizer/satellizer.dart';
+import 'package:di/di.dart';
+import 'package:di/annotations.dart';
+import 'package:logging/logging.dart';
+import 'package:polymer/polymer.dart';
+import 'package:core_elements/core_icon.dart';
+
 import 'package:webrtc_signal/webrtc_signal.dart';
 
-import 'package:web/services/peer_connection_service.dart';
-import 'package:web/controllers/app_controller.dart';
+import 'livehq_manager.dart';
 
-import 'package:web/controllers/login_controller.dart';
-import 'package:web/controllers/profile_controller.dart';
-import 'package:web/controllers/registrations_controller.dart';
-import 'package:web/routes/auth_routes.dart';
 
-class WebModule extends Module {
-  WebModule() {
-    bind(AuthConfig, toValue: new AuthConfig()
-      ..base='http://localhost:3000'
-      ..createPath='/users.json'
-      ..profilePath='/profile.json'
-      ..apiPrefix='/api/v1'
-    );
-    bind(Auth);
-    bind(WebRtcSignalService);
-    bind(PeerConnectionService);
-    bind(AppController);
+@Injectable()
+class Config {
+  final Logger log = new Logger('Config');
 
-    String publicKey = 'otTvGcYtLMK1Q6W6d8LHeQlO4lo';
-    bind(OauthioConfig, toValue: new OmniauthOauthioConfig(publicKey, 'localhost', 3000, 'users/auth')..secure=false);
+  WebSocket webSocket;
 
-    bind(RouteInitializerFn, toImplementation: AuthRouteInitializer);
-    bind(LoginController);
-    bind(ProfileController);
-    bind(RegistrationsController);
-    bind(NgRoutingUsePushState,  toValue: new NgRoutingUsePushState.value(false));
+  Future init() async {
+    Completer completer = new Completer();
+    try {
+      // Initialization logic
+      webSocket = await initWebSocket();
+      completer.complete();
+    } catch(e) {
+      completer.completeError(e);
+    }
+
+    return completer.future;
+  }
+
+  String get webSocketUri {
+    // TODO: This shouldn't actually be tied to the current host!
+    return "ws://${window.location.hostname}:1234/ws";
+  }
+
+
+  String get host {
+    return window.location.hostname;
+  }
+
+  String get identifierResolverUri {
+    return "http://$host:3000/api/v1/identifiers.json";
+  }
+
+  Future<WebSocket> initWebSocket() {
+    Completer completer = new Completer();
+
+    var webSocket = new WebSocket(webSocketUri);
+    webSocket.onOpen.listen((e) {
+      log.info("Websocket opened with $webSocketUri.");
+      completer.complete(webSocket);
+    });
+
+    return completer.future;
   }
 }
 
-void main() {
-  Logger.root.level = Level.FINEST;
+void main() async {
   Logger.root.onRecord.listen((LogRecord r) {
-    print(r.message);
+    print("${r.time}\t${r}");
   });
 
-  Injector injector = applicationFactory()
-  .addModule(new AuthModule())
-  .addModule(new WebRtcSignalModule())
-  .addModule(new WebModule())
-  .run();
-}
+  Logger.root.level = Level.FINEST;
+  final Logger log = new Logger('Main');
 
+  Config config = new Config();
+  await config.init();
+
+  // See examples at https://github.com/angular/di.dart
+  var injector = new ModuleInjector([new Module()
+    ..bind(Config, toValue: config)
+    ..bind(SignalHandler, toValue: new WebSocketSignalHandler.fromWebSocket(config.webSocket))
+    ..bind(IdentifierResolver, toValue: new RestfulIdentifierResolver(config.identifierResolverUri))
+    ..bind(WebRtcConfig, toImplementation: StandardWebRtcConfig)
+    ..bind(Capturer)
+    ..bind(PublisherFactory)
+    ..bind(SubscriberFactory)
+    ..bind(Manager)
+  ]);
+
+  Manager manager = injector.get(Manager);
+
+  var polymer = await initPolymer();
+  polymer.run(() {
+    // Code here is in the polymer Zone, which ensures that
+    // @observable properties work correctly.
+    Polymer.onReady.then((_) async {
+      LiveHqManager liveHqManager = document.querySelector('livehq-manager');
+      liveHqManager.setManager(manager);
+    });
+  });
+}

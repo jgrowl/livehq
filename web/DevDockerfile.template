@@ -1,0 +1,19 @@
+FROM google/dart
+
+RUN groupadd -g ${GID} -r app && useradd -u ${UID} -r -g app app
+
+WORKDIR /usr/src/app
+
+ADD pubspec.* /usr/src/app/
+ADD client/pubspec.* /usr/src/app/client/
+
+RUN pub get
+ADD . /usr/src/app
+RUN pub get --offline
+
+RUN chown -R app:app /usr/src/app
+USER app
+
+EXPOSE 8080
+
+CMD ["pub", "serve", "--hostname=0.0.0.0", "--mode=debug"]

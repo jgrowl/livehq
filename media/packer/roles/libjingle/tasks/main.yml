@@ -1,0 +1,3 @@
+---
+# tasks file for libjingle
+- copy: src=debug/linux/libjingle_peerconnection_so.so dest=/usr/local/lib owner=root group=root mode=0644

@@ -1,0 +1,36 @@
+{
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "requirements.txt",
+      "destination": "/tmp/requirements.txt"
+    },
+    {
+      "type": "shell",
+      "inline": ["ansible-galaxy install -r /tmp/requirements.txt"]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "local.yml",
+      "role_paths": ["./roles/libjingle"]
+    }
+  ],
+  "builders": [
+    {
+      "type": "docker",
+      "image": "jgrowl/livehq-base:0.3",
+      "pull": false,
+      "export_path": "image.tar"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-import",
+        "repository": "jgrowl/livehq-media",
+        "tag": "0.3"
+      },
+      "docker-push"
+    ]
+  ]
+}

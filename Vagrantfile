@@ -5,18 +5,35 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  vagrant_root = File.dirname(__FILE__)
 
-  config.vm.provider "docker"
+  config.trigger.before :ALL do
+    run "#{vagrant_root}/config/fill-templates.sh"
+  end
+
+
+  # config.vm.synced_folder "~/.bundle", "/usr/local/bundle", :create => true
   config.vm.synced_folder "~/.ivy2", "/home/app/.ivy2", :create => true
   config.vm.synced_folder "~/.pub-cache", "/home/app/.pub-cache", :create => true
 
-  config.vm.define "consul-server" do |consul_server|
+  config.vm.define "turnserver" do |turnserver|
+    turnserver.vm.provider "docker" do |docker|
+      docker.name  = "turnserver"
+      docker.image = "bprodoehl/turnserver"
+      docker.create_args = %w(-d --name=turnserver --restart="on-failure:10" --net=host)
+      docker.ports = %w(3478:3478 3478:3478/udp)
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
+  config.vm.define "consul" do |consul_server|
     consul_server.vm.provider "docker" do |docker|
-      docker.name  = "livehq-consul-server"
+      docker.name  = "consul"
       docker.image = "progrium/consul"
       docker.create_args = %w(-h node1)
-      docker.cmd = ['-server', '-advertise', '172.17.0.1', '-bootstrap', '-ui-dir','/ui']
-      docker.ports = %w(8400:8400 8500:8500 8600:53/udp)
+      docker.cmd = ['-server', '-bootstrap', '-ui-dir','/ui']
+      docker.ports = %w(8400:8400 8500:8500 8600:53/udp 172.17.42.1:53:53/udp)
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
@@ -24,27 +41,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "registrator" do |registrator|
     registrator.vm.provider "docker" do |docker|
-      docker.name  = "livehq-registrator"
+      docker.name  = "registrator"
       docker.image = "gliderlabs/registrator:master"
       docker.create_args = %w(-d)
       docker.volumes = %w(/var/run/docker.sock:/tmp/docker.sock)
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.cmd = ['-internal', 'consul://livehq-consul-server:8500']
+      docker.link "consul:consul"
+      docker.cmd = ['-internal', 'consul://consul:8500']
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
   end
 
-  config.vm.define "redis" do |media|
-    media.vm.provider "docker" do |docker|
-      docker.name  = "livehq-redis"
-      docker.build_dir = "./packer/redis"
-      # docker.create_args = %w(-P)
+  config.vm.define "redis" do |redis|
+    redis.vm.provider "docker" do |docker|
+      docker.name  = "livehq_redis"
+      docker.build_dir = "redis"
       docker.env = {
-          'SERVICE_NAME' => 'livehq-redis',
-          # Just an example tag.
-          # See http://progrium.com/blog/2014/09/10/automatic-docker-service-announcement-with-registrator/
-          # 'SERVICE_TAGS' => 'primary'
+          'SERVICE_NAME' => 'livehq-redis'
       }
       docker.ports = ["6379:6379"]
       docker.vagrant_vagrantfile = __FILE__
@@ -52,41 +65,55 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.define "publisher" do |publisher|
-    publisher.vm.provider "docker" do |docker|
-      docker.name  = "livehq-publisher"
-      docker.image = "jgrowl/livehq-media:0.1"
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
-      docker.ports = ["2551:2551"]
-      docker.expose = ["2551"]
+  config.vm.define "mongodb" do |redis|
+    redis.vm.provider "docker" do |docker|
+      docker.name  = "livehq_mongodb"
+      docker.image = "mongo"
       docker.env = {
-          'SERVICE_NAME' => 'livehq-publisher-seed',
-          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+          'SERVICE_NAME' => 'livehq-mongodb'
       }
-      docker.cmd = %w(./packer/scripts/start-publisher.sh)
+      docker.ports = ["27017:27017"]
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
   end
 
-  config.vm.define "publisher-monitor" do |publisher_monitor|
-    publisher_monitor.vm.provider "docker" do |docker|
-      docker.name  = "livehq-publisher-monitor"
-      docker.image = "jgrowl/livehq-media:0.1"
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
-      docker.ports = ["2552:2552"]
-      docker.expose = ["2552"]
+  config.vm.define "publisher" do |publisher|
+    publisher.vm.provider "docker" do |docker|
+      docker.name  = "livehq_publisher_vagrant"
+      docker.build_dir = "media"
+      docker.build_args = %W(-f #{vagrant_root}/media/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/media", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
+      docker.ports = ["2551:2551"]
       docker.env = {
-          'SERVICE_NAME' => 'livehq-publisher-monitor-seed',
-          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+          'SERVICE_NAME' => 'livehq-publisher-seed'
       }
-      docker.cmd = %w(./packer/scripts/start-publisher-monitor.sh)
+      docker.cmd = ["sbt",
+                    "-Djava.library.path=/vagrant/media/lib/native",
+                    "-Dakka.remote.netty.tcp.hostname=livehq-publisher-seed",
+                    "-Dakka.remote.netty.tcp.port=2551",
+                    "run-main server.app.App publisher -p 2551"]
+
+      docker.vagrant_vagrantfile = __FILE__
+      docker.remains_running = false
+    end
+  end
+
+  config.vm.define "publishermonitor" do |publisher|
+    publisher.vm.provider "docker" do |docker|
+      docker.name  = "livehq_publishermonitor_vagrant"
+      docker.build_dir = "media"
+      docker.build_args = %W(-f #{vagrant_root}/media/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/media", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
+      docker.ports = ["2552:2552"]
+      docker.env = {
+        'SERVICE_NAME' => 'livehq-publisher-monitor-seed',
+      }
+      docker.cmd = ["sbt",
+                    "-Djava.library.path=/vagrant/media/lib/native",
+                    "-Dakka.remote.netty.tcp.hostname=livehq-publisher-monitor-seed",
+                    "-Dakka.remote.netty.tcp.port=2552",
+                    "run-main server.app.App publisher-monitor -p 2552"]
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
@@ -94,58 +121,56 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "subscriber" do |subscriber|
     subscriber.vm.provider "docker" do |docker|
-      docker.name  = "livehq-subscriber"
-      docker.image = "jgrowl/livehq-media:0.1"
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
+      docker.name  = "livehq_subscriber_vagrant"
+      docker.build_dir = "media"
+      docker.volumes = %W(#{vagrant_root}/media/target/scala-2.11/media-assembly-1.0.jar:/app/media-assembly-1.0.jar)
+      docker.build_dir = "media"
+      docker.build_args = %W(-f #{vagrant_root}/media/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/media", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
       docker.ports = ["2553:2553"]
       docker.env = {
-          'SERVICE_NAME' => 'livehq-subscriber-seed',
-          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+        'SERVICE_NAME' => 'livehq-subscriber-seed'
       }
-
-      docker.cmd = %w(./packer/scripts/start-subscriber.sh)
+      docker.cmd = ["sbt",
+                    "-Djava.library.path=/vagrant/media/lib/native",
+                    "-Dakka.remote.netty.tcp.hostname=livehq-subscriber-seed",
+                    "-Dakka.remote.netty.tcp.port=2553",
+                    "run-main server.app.App subscriber -p 2553"]
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
   end
 
-  config.vm.define "subscriber-monitor" do |media|
-    media.vm.provider "docker" do |docker|
-      docker.name  = "livehq-subscriber-monitor"
-      docker.image = "jgrowl/livehq-media:0.1"
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = ["-w", "/vagrant/media", "--dns-search", "service.consul"]
+  config.vm.define "subscribermonitor" do |subscribermonitor|
+    subscribermonitor.vm.provider "docker" do |docker|
+      docker.name  = "livehq_subscribermonitor_vagrant"
+      docker.build_dir = "media"
+      docker.build_args = %W(-f #{vagrant_root}/media/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/media", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
       docker.ports = ["2554:2554"]
       docker.env = {
-          'SERVICE_NAME' => 'livehq-subscriber-monitor-seed',
-          'LD_LIBRARY_PATH' => '/vagrant/media/lib/native',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+        'SERVICE_NAME' => 'livehq-subscriber-monitor-seed',
       }
-
-      docker.cmd = %w(./packer/scripts/start-subscriber-monitor.sh)
+      docker.cmd = ["sbt",
+                    "-Djava.library.path=/vagrant/media/lib/native",
+                    "-Dakka.remote.netty.tcp.hostname=livehq-subscriber-monitor-seed",
+                    "-Dakka.remote.netty.tcp.port=2554",
+                    "run-main server.app.App subscriber-monitor -p 2554"]
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
   end
 
-  config.vm.define "signal" do |media|
-    media.vm.provider "docker" do |docker|
-      docker.name  = "livehq-signal"
-      docker.image = "ruby:2.2-onbuild"
-      docker.link "livehq-redis:livehq-redis"
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = %w(-w /vagrant/signal --dns-search service.consul)
+  config.vm.define "signal" do |signal|
+    signal.vm.provider "docker" do |docker|
+      docker.name  = "livehq_signal"
+      docker.build_dir = "signal"
+      docker.build_args = %W(-f #{vagrant_root}/signal/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/signal", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
       docker.ports = ["1234:1234"]
       docker.env = {
-          'SERVICE_NAME' => 'livehq-signal',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+          'SERVICE_NAME' => 'livehq-signal'
       }
-      docker.cmd = %w(./scripts/start.sh)
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
@@ -153,38 +178,37 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "api" do |api|
     api.vm.provider "docker" do |docker|
-      docker.name  = "livehq-api"
-      docker.image = "jgrowl/livehq-api:0.1"
-      docker.link "livehq-consul-server:livehq-consul-server"
-      docker.create_args = %w(-w /vagrant/api --dns-search service.consul)
+      docker.name  = "livehq_api"
+      docker.build_dir = "api"
+      docker.build_args = %W(-f #{vagrant_root}/api/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/api", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
       docker.ports = ["3000:3000"]
       docker.env = {
-          'SERVICE_NAME' => 'livehq-api',
-          'RBENV_ROOT' => '/usr/local/rbenv',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+          'SERVICE_NAME' => 'livehq-api'
       }
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
-      docker.cmd = %w(./packer/scripts/start.sh)
     end
   end
 
-  config.vm.define "web" do |media|
-    media.vm.provider "docker" do |docker|
-      docker.name  = "livehq-web"
-      docker.image = "jgrowl/livehq-web:0.1"
-      docker.link "livehq-consul-server:livehq-consul-server"
+  # export PUB_CACHE=/home/app/.pub-cache
+  config.vm.define "web" do |web|
+    web.vm.provider "docker" do |docker|
+      docker.name  = "livehq_web"
+      docker.build_dir = "web"
+      docker.build_args = %W(-f #{vagrant_root}/web/DevDockerfile)
+      docker.create_args = ["-w", "/vagrant/web", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
       docker.ports = ["8080:8080"]
-      docker.create_args = %w(-w /vagrant/signal/client/example --dns-search service.consul)
       docker.env = {
-          'SERVICE_NAME' => 'livehq-web',
-          'APP_UID' => Process.uid,
-          'APP_GUID' => Process.gid
+          'SERVICE_NAME' => 'livehq-web'
       }
-      docker.cmd = %w(./packer/scripts/start.sh)
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
   end
+
+  config.push.define "test", strategy: "local-exec" do |push|
+      push.script = "./config/push.sh"
+  end
+
 end

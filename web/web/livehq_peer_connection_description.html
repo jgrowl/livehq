@@ -1,0 +1,48 @@
+<link rel="import" href="../packages/paper_elements/paper_shadow_nodart.html">
+
+<polymer-element name="livehq-peer-connection-description" attributes="peerConnectionDescription">
+    <template>
+        <style>
+            paper-shadow {
+                width: 300px;
+            }
+
+        </style>
+
+        <paper-shadow z="1">
+            <paper-icon-button id="subscriber-button" class="toggle toggle-button" icon="av:movie"
+                               on-tap="{{ subscribe }}"></paper-icon-button>
+
+            <p>{{ peerConnectionDescription.id }}</p>
+            <template repeat="{{ stream in peerConnectionDescription.streams }}">
+                <p>{{ stream }}</p>
+            </template>
+
+            <template repeat="{{ registry in peerConnectionDescription.registries }}">
+                <p>{{ registry.id }}</p>
+
+                <p>{{ registry['sub-path'] }}</p>
+
+                <p>{{ registry['pub-path'] }}</p>
+
+                <p>{{ registry['pub-signal-state'] }}</p>
+
+                <p>{{ registry['pub-ice-connectionState'] }}</p>
+
+                <p>{{ registry['sub-ice-connectionState'] }}</p>
+            </template>
+
+            <template repeat="{{ subscriber in peerConnectionDescription.subscribers }}">
+                <p>{{ subscriber }}</p>
+            </template>
+
+            <p>{{ peerConnectionDescription['signal-state'] }}</p>
+
+            <p>{{ peerConnectionDescription['ice-connection-state'] }}</p>
+
+            <content>
+            </content>
+        </paper-shadow>
+    </template>
+    <script type="application/dart" src="livehq_peer_connection_description.dart"></script>
+</polymer-element>

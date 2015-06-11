@@ -1,8 +1,0 @@
----
-
-- hosts: all
-  sudo: true
-  #gather_facts: false
-  tasks:
-  - copy: src=files/libjingle/debug/linux/libjingle_peerconnection_so.so dest=/usr/local/lib owner=root group=root mode=0644
-  - copy: src=files/libjingle/debug/linux/libjingle_peerconnection.jar dest=/usr/local/lib owner=root group=root mode=0644

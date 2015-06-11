@@ -11,7 +11,7 @@ class RedisGateway
 
   def initialize
     @sockets = {}
-    @redis = ::Redis.new(:host => "livehq-redis", :timeout => 0, :driver => :celluloid)
+    @redis = ::Redis.new(:host => "livehq-redis.service.consul", :timeout => 0, :driver => :celluloid)
     init_subscriptions
     async.run
   end
@@ -46,7 +46,7 @@ class RedisGateway
 
   def run
     defer {
-      redis = ::Redis.new(:host => "livehq-redis", :timeout => 0, :driver => :celluloid)
+      redis = ::Redis.new(:host => "livehq-redis.service.consul", :timeout => 0, :driver => :celluloid)
       redis.psubscribe("web.*") do |on|
         on.pmessage do |pattern, channel, message|
           split = channel.split(':')

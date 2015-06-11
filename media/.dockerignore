@@ -1,0 +1,10 @@
+packer
+log
+.idea
+.vagrant
+lib/libjingle_peerconnection.jar
+project/target
+target/resolution-cache
+target/snapshots
+target/streams
+target/scala-2.11/classes

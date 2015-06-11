@@ -1,6 +1,0 @@
-- name: Configure livehq base box
-  hosts: all
-  sudo: yes
-
-  tasks:
-    - user: name=app

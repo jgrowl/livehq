@@ -1,0 +1,14 @@
+<polymer-element name="livehq-subscriber" attributes="subscriber">
+    <template>
+        <!--..onLoadedMetadata.listen((e) => log.fine("onLoadedMetaData: ${e.type} "));-->
+        <!--onloadedmetadata="{{ onLoadMetaData }}"-->
+        <template repeat="{{ mediaStream in subscriber.mediaStreams }}">
+            <paper-icon-button id="subscriber-close" class="toggle toggle-button" icon="close"
+                               on-tap="{{ close }}"></paper-icon-button>
+            <video autoplay="true" src="{{ createObjectUrl(mediaStream) }}" ></video>
+        </template>
+        <content>
+        </content>
+    </template>
+    <script type="application/dart" src="livehq_subscriber.dart"></script>
+</polymer-element>

@@ -1,0 +1,4 @@
+- name: Configure livehq base box
+  hosts: all
+  sudo: yes
+

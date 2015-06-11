@@ -66,7 +66,7 @@ class Publisher(webRtcHelper: WebRtcHelper, callback: PublisherCallback) extends
     _registryPeerConnections = mutable.Map.empty[String, PathedPcDetails]
   }
 
-  // self.path.parent.name is the type name (utf-8 URL-encoded) 
+  // self.path.parent.name is the type name (utf-8 URL-encoded)
   // self.path.name is the entry identifier (utf-8 URL-encoded)
   override def persistenceId: String = self.path.parent.name + "-" + self.path.name
 

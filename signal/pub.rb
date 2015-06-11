@@ -6,7 +6,7 @@ require 'redis'
 require 'json'
 
 # $redis = Redis.new
-$redis = Redis.new(:host => "livehq-redis")
+$redis = Redis.new(:host => "livehq-redis.service.consul")
 
 channel = 'signal'   #ARGV[0]
 origin = '1'

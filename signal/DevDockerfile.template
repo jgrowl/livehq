@@ -1,0 +1,5 @@
+FROM ruby:2.2-onbuild
+RUN groupadd -g ${GID} -r app && useradd -u ${UID} -r -g app app
+USER app
+EXPOSE 1234
+CMD ruby server.rb
