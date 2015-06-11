@@ -131,12 +131,9 @@ subscribermonitor:
            -jar /app/media-assembly-1.0.jar subscriber-monitor -p 2554"
 
 signal:
-#  image: ruby:2.2-onbuild
   build: signal
   ports:
   - "1234:1234"
-#  volumes:
-#  - /home/ubuntu/signal:/usr/src/app
   dns:
   - 172.17.42.1
   dns_search:
@@ -147,7 +144,6 @@ signal:
   command: ruby server.rb
 
 api:
-#  image: jgrowl/livehq-api:0.1
   build: api
   ports:
   - "3000:3000"
@@ -160,12 +156,9 @@ api:
   working_dir: /usr/src/app
 
 web:
-  #image: nginx
   build: web
   ports:
   - "80:80"
-#  volumes:
-#  - /home/ubuntu/web:/usr/share/nginx/html:ro
   dns:
   - 172.17.42.1
   dns_search:
