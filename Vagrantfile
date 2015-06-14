@@ -11,21 +11,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     run "#{vagrant_root}/config/fill-templates.sh"
   end
 
-
   # config.vm.synced_folder "~/.bundle", "/usr/local/bundle", :create => true
   config.vm.synced_folder "~/.ivy2", "/home/app/.ivy2", :create => true
   config.vm.synced_folder "~/.pub-cache", "/home/app/.pub-cache", :create => true
 
-  config.vm.define "turnserver" do |turnserver|
-    turnserver.vm.provider "docker" do |docker|
-      docker.name  = "turnserver"
-      docker.image = "bprodoehl/turnserver"
-      docker.create_args = %w(-d --name=turnserver --restart="on-failure:10" --net=host)
-      docker.ports = %w(3478:3478 3478:3478/udp)
-      docker.vagrant_vagrantfile = __FILE__
-      docker.remains_running = false
-    end
-  end
+  # config.vm.define "turnserver" do |turnserver|
+  #   turnserver.vm.provider "docker" do |docker|
+  #     docker.name  = "turnserver"
+  #     docker.image = "bprodoehl/turnserver"
+  #     docker.create_args = %w(-d --name=turnserver --restart="on-failure:10" --net=host)
+  #     docker.ports = %w(3478:3478 3478:3478/udp)
+  #     docker.vagrant_vagrantfile = __FILE__
+  #     docker.remains_running = false
+  #   end
+  # end
 
   config.vm.define "consul" do |consul_server|
     consul_server.vm.provider "docker" do |docker|
@@ -93,7 +92,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     "-Dakka.remote.netty.tcp.hostname=livehq-publisher-seed",
                     "-Dakka.remote.netty.tcp.port=2551",
                     "run-main server.app.App publisher -p 2551"]
-
       docker.vagrant_vagrantfile = __FILE__
       docker.remains_running = false
     end
@@ -110,7 +108,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         'SERVICE_NAME' => 'livehq-publisher-monitor-seed',
       }
       docker.cmd = ["sbt",
-                    "-Djava.library.path=/vagrant/media/lib/native",
                     "-Dakka.remote.netty.tcp.hostname=livehq-publisher-monitor-seed",
                     "-Dakka.remote.netty.tcp.port=2552",
                     "run-main server.app.App publisher-monitor -p 2552"]
@@ -122,8 +119,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "subscriber" do |subscriber|
     subscriber.vm.provider "docker" do |docker|
       docker.name  = "livehq_subscriber_vagrant"
-      docker.build_dir = "media"
-      docker.volumes = %W(#{vagrant_root}/media/target/scala-2.11/media-assembly-1.0.jar:/app/media-assembly-1.0.jar)
       docker.build_dir = "media"
       docker.build_args = %W(-f #{vagrant_root}/media/DevDockerfile)
       docker.create_args = ["-w", "/vagrant/media", "--dns", "172.17.42.1",  "--dns-search", "service.consul"]
@@ -152,7 +147,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         'SERVICE_NAME' => 'livehq-subscriber-monitor-seed',
       }
       docker.cmd = ["sbt",
-                    "-Djava.library.path=/vagrant/media/lib/native",
                     "-Dakka.remote.netty.tcp.hostname=livehq-subscriber-monitor-seed",
                     "-Dakka.remote.netty.tcp.port=2554",
                     "run-main server.app.App subscriber-monitor -p 2554"]

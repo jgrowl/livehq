@@ -10,12 +10,6 @@ abstract class SignalHandler {
   StreamController onMessageController = new StreamController.broadcast();
   Stream get onMessage => onMessageController.stream;
 
-  var iceServers = {
-      'iceServers': [{
-          'url': 'stun:stun.l.google.com:19302'
-      }]
-  };
-
   SignalHandler();
 
   /// Abstract Methods
@@ -50,7 +44,6 @@ abstract class SignalHandler {
 
     return JSON.encode(message);
   }
-
 
   void subscriberAnswer(String identifier, RtcSessionDescription offer) {
     send(encodeSessionDescription(identifier, 'media.subscriber.webrtc.answer', offer));

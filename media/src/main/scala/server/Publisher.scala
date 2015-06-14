@@ -78,7 +78,8 @@ class Publisher(webRtcHelper: WebRtcHelper, callback: PublisherCallback) extends
   override def receiveCommand: Receive = {
     // Offer/Candidate are entry points for publishers.
     case Offer(identifier, offer) =>
-      log.info(s"$pcId Incoming.Offer received. [${Utils.stripNewline(offer.toString)}")
+      log.info(s"$pcId Incoming.Offer received. [${Map("type" -> offer.`type`, "description" -> Utils.stripNewline(offer.description))}]")
+
       val answer = webRtcHelper.createAnswer(_incomingPeerConnection.peerConnection, offer)
       if (answer.isDefined) {
         log.info(s"$pcId Answer created successfully. [${Utils.stripNewline(answer.get.toString)}]")

@@ -12,13 +12,13 @@ import org.webrtc._
  * Time: 1:45 PM
  */
 class WebRtcHelper(val factory: PeerConnectionFactory,
-                   iceServers: util.ArrayList[PeerConnection.IceServer]) {
+                   iceServers: util.List[PeerConnection.IceServer]) {
 
   val log: Logger = LoggerFactory.getLogger(classOf[WebRtcHelper])
 
-    def createPeerConnection(observer: PeerConnection.Observer): PeerConnection = {
-      factory.createPeerConnection(iceServers, createConstraints, observer)
-    }
+  def createPeerConnection(observer: PeerConnection.Observer): PeerConnection = {
+    factory.createPeerConnection(iceServers, createConstraints, observer)
+  }
 
   def setRemoteDescription(peerConnection: PeerConnection, remoteSessionDescription: SessionDescription) {
     val sdpLatch = new SdpObserverLatch
@@ -31,7 +31,7 @@ class WebRtcHelper(val factory: PeerConnectionFactory,
     }
   }
 
-  def createAnswer(peerConnection: PeerConnection, offer: SessionDescription) : Option[SessionDescription] = {
+  def createAnswer(peerConnection: PeerConnection, offer: SessionDescription): Option[SessionDescription] = {
     setRemoteDescription(peerConnection, offer)
 
     val sdpLatch = new SdpObserverLatch()
@@ -78,8 +78,8 @@ class WebRtcHelper(val factory: PeerConnectionFactory,
 
   def createConstraints: MediaConstraints = {
     val constraints = new MediaConstraints()
-//    constraints.mandatory.add(new KeyValuePair("OfferToReceiveVideo", "true"))
-//    constraints.mandatory.add(new KeyValuePair("OfferToReceiveAudio", "true"))
+    //    constraints.mandatory.add(new KeyValuePair("OfferToReceiveVideo", "true"))
+    //    constraints.mandatory.add(new KeyValuePair("OfferToReceiveAudio", "true"))
 
     constraints.optional.add(new KeyValuePair("RtpDataChannels", "true"))
     constraints.optional.add(new KeyValuePair("DtlsSrtpKeyAgreement", "false"))

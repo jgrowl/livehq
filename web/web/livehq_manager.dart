@@ -23,7 +23,7 @@ class LiveHqManager extends PolymerElement {
     // For now we will just poll for updates
     const fiveSec = const Duration(seconds:5);
     new Timer.periodic(fiveSec, (Timer t) {
-      log.finest("Updating available streams.");
+//      log.finest("Updating available streams.");
       this.shadowRoot.querySelector("core-ajax-dart").go();
     });
   }

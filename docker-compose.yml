@@ -57,8 +57,12 @@ mongodb:
   environment:
   - SERVICE_NAME=livehq-mongodb
 
-publisher:
+media:
   build: media
+  command: "ls"
+
+publisher:
+  image: livehq_media
   ports:
   - "2551:2551"
   environment:
@@ -76,7 +80,7 @@ publisher:
            -jar /app/media-assembly-1.0.jar publisher -p 2551"
 
 publishermonitor:
-  build: media
+  image: livehq_media
   ports:
   - "2552:2552"
   dns:
@@ -85,16 +89,15 @@ publishermonitor:
   - service.consul
   environment:
   - SERVICE_NAME=livehq-publisher-monitor-seed
-  - LD_LIBRARY_PATH=/usr/local/lib
   working_dir: /app
   command: "java \
-            -Djava.library.path=/usr/local/lib \
             -Dakka.remote.netty.tcp.hostname=livehq-publisher-monitor-seed \
             -Dakka.remote.netty.tcp.port=2552 \
-            -jar /app/media-assembly-1.0.jar subscriber -p 2552"
+            -jar /app/media-assembly-1.0.jar publisher-monitor -p 2552"
 
 subscriber:
-  build: media
+#  build: media
+  image: livehq_media
   ports:
   - "2553:2553"
   dns:
@@ -111,9 +114,9 @@ subscriber:
             -Dakka.remote.netty.tcp.port=2553 \
             -jar /app/media-assembly-1.0.jar subscriber -p 2553"
 
-
 subscribermonitor:
-  build: media
+#  build: media
+  image: livehq_media
   ports:
   - "2554:2554"
   dns:
@@ -122,10 +125,8 @@ subscribermonitor:
   - service.consul
   environment:
   - SERVICE_NAME=livehq-subscriber-monitor-seed
-  - LD_LIBRARY_PATH=/usr/local/lib
   working_dir: /app
   command: "java \
-            -Djava.library.path=/usr/local/lib \
             -Dakka.remote.netty.tcp.hostname=livehq-subscriber-monitor-seed \
            -Dakka.remote.netty.tcp.port=2554 \
            -jar /app/media-assembly-1.0.jar subscriber-monitor -p 2554"

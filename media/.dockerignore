@@ -2,7 +2,7 @@ packer
 log
 .idea
 .vagrant
-lib/libjingle_peerconnection.jar
+#lib/libjingle_peerconnection.jar
 project/target
 target/resolution-cache
 target/snapshots

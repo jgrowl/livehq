@@ -3,17 +3,18 @@ package server.app
 import akka.actor._
 import akka.contrib.pattern.ClusterSharding
 import server.{Publisher, Subscriber}
-import tv.camfire.media.config.ClusterModule
+import tv.camfire.media.config.BaseModule
 import tv.camfire.redis.RedisPublisherSignalMonitor
 
 object PublisherMonitorApp {
 
-  def run(p: Int, startStore: Boolean): Unit = {
-    val modules: ClusterModule = new ClusterModule {
+  def run(p: Int): Unit = {
+    val modules: BaseModule = new BaseModule {
       def port(): String = {
         p.toString
       }
     }
+
     val system = modules.actorSystem
     val properties = modules.properties
 

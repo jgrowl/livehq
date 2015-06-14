@@ -6,6 +6,7 @@ import akka.event.LoggingAdapter
 import akka.persistence.PersistentActor
 import livehq._
 import org.webrtc.{IceCandidate, SessionDescription}
+//import server.Subscriber.SendOffer
 import server.pc.obs.SubscriberPcObs
 import server.registry.Registry
 import tv.camfire.media.callback.SubscriberCallback
@@ -35,6 +36,7 @@ object Subscriber {
   case class Answer(identifier: String, answer: SessionDescription) extends Command
 
   case class Candidate(identifier: String, candidate: IceCandidate) extends Command
+//  case class SendOffer(identifier: String) extends Command
 }
 
 class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallback) extends PersistentActor with ActorLogging {
@@ -83,12 +85,24 @@ class Subscriber(webRtcHelper: WebRtcHelper, subscriberCallback: SubscriberCallb
       context.system.actorSelection("user/registry") ! Registry.Incoming.Subscribe(publisherIdentifier)
 
     case Subscriber.Answer(identifier, answer) =>
-      log.info(s"$pcId Answer received. [${Utils.stripNewline(answer.toString)}")
+//      log.info(s"$pcId Answer received. [${Utils.stripNewline(answer.toString)}")
+      log.info(s"$pcId Answer received. [${Map("type" -> answer.`type`, "description" -> Utils.stripNewline(answer.description))}]")
       webRtcHelper.setRemoteDescription(_incomingPeerConnection.peerConnection, answer)
 
     case Subscriber.Candidate(identifier, candidate) =>
       log.info(s"$pcId Candidate received. [${Utils.stripNewline(candidate.toString)}")
       _incomingPeerConnection.peerConnection.addIceCandidate(candidate)
+
+//    case SendOffer(identifier)  =>
+//      // Update offer
+//      val offer = webRtcHelper.createOffer(_incomingPeerConnection.peerConnection)
+//      if (offer.isDefined) {
+//        log.warning("the offer was defined, we'll send now")
+//        subscriberCallback.sendOffer(_identifier, offer.get)
+//      } else {
+//        log.warning("the offer is not defined")
+//      }
+
 
     case Internal.AddRegistryMediaStream(mediaStreamId, mediaStream) =>
       log.info(s"$pcId Internal.AddMediaStream : Adding MediaStream($mediaStreamId)...")

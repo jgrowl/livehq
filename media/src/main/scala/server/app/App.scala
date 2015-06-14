@@ -1,6 +1,6 @@
 package server.app
 
-case class Config(mode: String = "", port: Int = -1, startStore: Boolean = false, kwargs: Map[String, String] = Map())
+case class Config(mode: String = "", port: Int = -1, kwargs: Map[String, String] = Map())
 
 object App {
   def main(args: Array[String]): Unit = {
@@ -12,9 +12,9 @@ object App {
         opt[Int]("port") abbr "p" action { (x, c) =>
           c.copy(port = x)
         } text "sets port",
-        opt[Boolean]("startStore") abbr "s" action { (x, c) =>
-          c.copy(startStore = x)
-        } text "starts store",
+//        opt[Boolean]("startStore") abbr "s" action { (x, c) =>
+//          c.copy(startStore = x)
+//        } text "starts store",
         checkConfig { c =>
           if (c.port < 0) failure("port must be greater than zero") else success
         }
@@ -54,13 +54,13 @@ object App {
     parser.parse(args, Config()) match {
       case Some(config) =>
         if (config.mode == "publisher") {
-          PublisherApp.run(config.port, config.startStore)
+          PublisherApp.run(config.port)
         } else if (config.mode == "publisher-monitor") {
-          PublisherMonitorApp.run(config.port, config.startStore)
+          PublisherMonitorApp.run(config.port)
         } else if (config.mode == "subscriber") {
-          SubscriberApp.run(config.port, config.startStore)
+          SubscriberApp.run(config.port)
         } else if (config.mode == "subscriber-monitor") {
-          SubscriberMonitorApp.run(config.port, config.startStore)
+          SubscriberMonitorApp.run(config.port)
         }
       case None =>
       // arguments are bad, error message will have been displayed
